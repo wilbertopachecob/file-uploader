@@ -8,7 +8,7 @@
   <div
     class="alert alert-danger alert-dismissible fade show"
     role="alert"
-    v-if="errors.length"
+    v-if="true"
   >
     <ul class="mt-4">
       <li style="text-align: left" v-for="(error, idk) in errors" :key="idk">
@@ -17,13 +17,11 @@
     </ul>
     <button
       type="button"
-      class="close"
+      class="btn-close"
       data-dismiss="alert"
       aria-label="Close"
       @click="resetErrors"
-    >
-      <span aria-hidden="true">&times;</span>
-    </button>
+    ></button>
   </div>
   <div
     class="file-uploader"
