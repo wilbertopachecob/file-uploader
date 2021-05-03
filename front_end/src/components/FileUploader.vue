@@ -63,6 +63,11 @@
         @click="openGallery(file)"
         :style="{ cursor: isImage(file) || isVideo(file) ? 'pointer' : 'auto' }"
       >
+        <a
+          class="close"
+          @click="deleteFile($event, idk)"
+          title="Delete File"
+        ></a>
         <img :src="getSRC(file)" />
         <div class="thumbnail-details">
           <span> <b>Name:</b> {{ file.name }}</span>
@@ -164,6 +169,10 @@ export default {
             this.uploadPercentage = 0;
           });
       }
+    },
+    deleteFile(e, index) {
+      e.stopPropagation();
+      this.files.splice(index, 1);
     },
     selectFile(e) {
       const files = e.target.files;
@@ -275,6 +284,7 @@ export default {
   background-color: white;
   padding: 5px;
   max-width: 150px;
+  position: relative;
 }
 .thumbnail-container img {
   max-width: 140px;
@@ -314,5 +324,35 @@ export default {
 }
 progress {
   height: 18px;
+}
+.close {
+  background-color: white;
+  position: absolute;
+  /* right: 32px;
+  top: 32px; */
+  width: 32px;
+  height: 32px;
+  opacity: 0.3;
+  cursor: pointer;
+  top: 0px;
+  right: 0px;
+}
+.close:hover {
+  opacity: 1;
+}
+.close:before,
+.close:after {
+  position: absolute;
+  left: 15px;
+  content: " ";
+  height: 33px;
+  width: 2px;
+  background-color: #333;
+}
+.close:before {
+  transform: rotate(45deg);
+}
+.close:after {
+  transform: rotate(-45deg);
 }
 </style>
