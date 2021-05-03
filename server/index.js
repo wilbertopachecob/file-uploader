@@ -2,17 +2,25 @@ const express = require("express"),
   app = express(),
   router = require("./routes/routes"),
   cors = require("cors"),
-  morgan = require("morgan");
+  morgan = require("morgan"),
+  fs = require("fs");
 require("dotenv").config();
 
-const port = process.env.PORT || 3000,
+const port = process.env.PORT || 3000;
 
 const corsOptions = {
   origin: process.env.DEV_HOST,
   optionsSuccessStatus: 200,
 };
 
-app.use(morgan("combined"));
+app.use(
+  morgan("common", {
+    stream: fs.createWriteStream("./access.log", { flags: "a" }),
+  })
+);
+
+//app.use(morgan("combined"));
+app.use(morgan("dev"));
 
 app.use(express.static("public"));
 app.use("/uploads/img", express.static("uploads/img"));
