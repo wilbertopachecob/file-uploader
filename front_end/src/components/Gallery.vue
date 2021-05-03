@@ -80,7 +80,7 @@
           <button
             type="button"
             class="btn btn-danger"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
             @click="closeModal"
           >
             Close
