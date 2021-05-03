@@ -1,4 +1,6 @@
 .DS_Store
+!.gitkeep
+
 front_end/node_modules
 front_end/dist
 
