@@ -8,7 +8,7 @@
   <div
     class="alert alert-danger alert-dismissible fade show"
     role="alert"
-    v-if="true"
+    v-if="errors.length"
   >
     <ul class="mt-4">
       <li style="text-align: left" v-for="(error, idk) in errors" :key="idk">
