@@ -30,7 +30,6 @@
             class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
-            @click="closeModal"
           ></button>
         </div>
         <div class="modal-body">
@@ -77,12 +76,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-danger"
-            data-bs-dismiss="modal"
-            @click="closeModal"
-          >
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
             Close
           </button>
         </div>
@@ -130,18 +124,14 @@ export default {
       }
     },
     files(current) {
+      console.log({ current });
       this.videos = current.filter((f) => this.isVideo(f));
     },
   },
   mounted() {
     document
       .querySelector("#galleryModal")
-      .addEventListener("hidden.bs.modal", () => {
-        if (this.player) {
-          this.player.pause();
-          this.player = null;
-        }
-      });
+      .addEventListener("hidden.bs.modal", () => this.closePlayer());
   },
   methods: {
     isVideo,
@@ -151,7 +141,6 @@ export default {
       const index = this.files.findIndex((f) => f.name === name);
       this.index = index || 0;
       this.currentFile = this.files[this.index];
-      console.log(this.currentFile);
       if (this.isVideo(this.currentFile)) {
         this.loadPlayer();
       }

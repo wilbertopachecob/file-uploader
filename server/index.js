@@ -2,7 +2,8 @@ const express = require("express"),
   app = express(),
   port = process.env.PORT || 3000,
   router = require("./routes/routes"),
-  cors = require("cors");
+  cors = require("cors"),
+  morgan = require("morgan");
 require("dotenv").config();
 
 const corsOptions = {
@@ -10,8 +11,11 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+app.use(morgan("combined"));
+
 app.use(express.static("public"));
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads/img", express.static("uploads/img"));
+app.use("/uploads/misc", express.static("uploads/misc"));
 
 app.use(cors(corsOptions));
 

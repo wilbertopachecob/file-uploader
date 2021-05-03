@@ -1,10 +1,9 @@
 .DS_Store
 front_end/node_modules
 front_end/dist
-front_end/public/*
 
 server/node_modules
-server/uploads
+server/uploads/*
 server/public/*
 
 

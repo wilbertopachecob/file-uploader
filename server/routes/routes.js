@@ -1,3 +1,5 @@
+const { isVideo, isImage } = require("../helpers");
+
 const express = require("express"),
   router = express.Router(),
   { v4: uuidv4 } = require("uuid"),
@@ -5,11 +7,24 @@ const express = require("express"),
   maxSize = 100 * 1024 * 1024,
   path = require("path"),
   appDir = path.dirname(require.main.filename),
-  fs = require("fs");
+  fs = require("fs"),
+  mime = require("mime-types");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./uploads");
+    let dest = "./uploads/";
+    switch (true) {
+      case isVideo(file):
+        dest += "video";
+        break;
+      case isImage(file):
+        dest += "img";
+        break;
+      default:
+        dest += "misc";
+        break;
+    }
+    cb(null, dest);
   },
   filename: function (req, file, cb) {
     let name = file.originalname.split(".");
@@ -26,7 +41,7 @@ router.post("/upload-files", upload.array("files"), (req, res) => {
   res.json(req.files);
 });
 
-app.get("/video/:name", function (req, res) {
+router.get("/uploads/video/:name", function (req, res) {
   // Ensure there is a range given for the video
   const range = req.headers.range;
   if (!range) {
@@ -34,7 +49,7 @@ app.get("/video/:name", function (req, res) {
   }
 
   const name = req.params.name;
-  const videoPath = `${appDir}/uploads/${name}`;
+  const videoPath = `${appDir}/uploads/video/${name}`;
   const videoSize = fs.statSync(videoPath).size;
 
   // Parse Range
@@ -49,7 +64,7 @@ app.get("/video/:name", function (req, res) {
     "Content-Range": `bytes ${start}-${end}/${videoSize}`,
     "Accept-Ranges": "bytes",
     "Content-Length": contentLength,
-    "Content-Type": "video/mp4",
+    "Content-Type": mime.lookup(videoPath),
   };
 
   // HTTP Status 206 for Partial Content

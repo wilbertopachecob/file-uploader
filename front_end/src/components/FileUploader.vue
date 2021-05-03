@@ -82,9 +82,10 @@
     class="mt-4"
     v-if="uploadedFiles.length"
     :files="uploadedFiles"
+    @load-gallery="openGallery($event, 0)"
   />
   <gallery
-    :files="files.filter((f) => isImage(f) || isVideo(f))"
+    :files="getFilesIntance().filter((f) => isImage(f) || isVideo(f))"
     ref="gallery"
   />
 </template>
@@ -112,6 +113,7 @@ export default {
     uploadPercentage: 0,
     isLoading: false,
     uploadedFiles: [],
+    loadLocal: 1,
   }),
   methods: {
     bytesToSize,
@@ -127,8 +129,14 @@ export default {
           return require("@/assets/img/no-image-icon.png");
       }
     },
-    openGallery(file) {
-      this.$refs.gallery.openModal(file.name);
+    getFilesIntance() {
+      return this.loadLocal ? this.files : this.uploadedFiles;
+    },
+    openGallery(file, loadValue = 1) {
+      this.loadLocal = loadValue;
+      this.$nextTick(() => {
+        this.$refs.gallery.openModal(file.name);
+      });
     },
     upload() {
       if (this.files.length) {
@@ -160,7 +168,7 @@ export default {
               this.uploadedFiles.push({
                 name: f.filename,
                 size: f.size,
-                url: f.path,
+                src: f.path,
                 type: f.mimetype,
               });
             });

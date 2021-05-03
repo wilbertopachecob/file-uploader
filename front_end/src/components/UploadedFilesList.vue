@@ -2,12 +2,13 @@
   <div>
     <h3>Uploaded Files</h3>
     <table class="table">
-      <thead class="thead-dark">
+      <thead class="table-dark">
         <tr>
           <th scope="col">#</th>
           <th scope="col" style="text-align: left">Name</th>
           <th scope="col">Size</th>
           <th scope="col">Download</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
@@ -19,12 +20,22 @@
             <a
               class="btn btn-primary"
               title="Download"
-              :href="file.url"
+              :href="file.src"
               target="_blank"
               :download="file.name"
             >
               <i class="fa fa-download"></i>
             </a>
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-success"
+              v-if="isVideo(file) || isImage(file)"
+              @click="loadGallery(file)"
+            >
+              <i class="fas fa-eye"></i> View
+            </button>
           </td>
         </tr>
       </tbody>
@@ -33,6 +44,7 @@
 </template>
 
 <script>
+import { isImage, isVideo } from "../helpers";
 import { bytesToSize } from "../helpers";
 export default {
   props: {
@@ -43,6 +55,11 @@ export default {
   },
   methods: {
     bytesToSize,
+    isImage,
+    isVideo,
+    loadGallery(file) {
+      this.$emit("load-gallery", file);
+    },
   },
 };
 </script>
