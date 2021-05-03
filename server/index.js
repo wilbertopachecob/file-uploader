@@ -1,10 +1,11 @@
 const express = require("express"),
   app = express(),
-  port = process.env.PORT || 3000,
   router = require("./routes/routes"),
   cors = require("cors"),
   morgan = require("morgan");
 require("dotenv").config();
+
+const port = process.env.PORT || 3000,
 
 const corsOptions = {
   origin: process.env.DEV_HOST,

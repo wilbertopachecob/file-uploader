@@ -59,7 +59,7 @@
     </div>
     <div class="thumbnails mt-5 p-4" v-show="files.length">
       <div
-        class="thumbnail-container ml-4 mt-3"
+        class="thumbnail-container mx-2 mt-3"
         v-for="(file, idk) of files"
         :key="idk"
         @click="openGallery(file)"

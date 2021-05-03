@@ -57,9 +57,12 @@
               <i class="fas fa-chevron-circle-left"></i>
             </div>
             <div class="gallery-body w-100 h-100">
-              <template v-if="isImage(currentFile)">
-                <img :src="currentFile.src" :alt="currentFile.name" />
-              </template>
+              <img
+                v-if="isImage(currentFile)"
+                :src="currentFile.src"
+                :alt="currentFile.name"
+              />
+
               <template v-for="(video, index) in videos" :key="index">
                 <video
                   :ref="`videoPlayer_${video.name}`"
@@ -72,6 +75,25 @@
             </div>
             <div class="right-btn" @click="slide('right')">
               <i class="fas fa-chevron-circle-right"></i>
+            </div>
+          </div>
+          <div class="thumbnails">
+            <div
+              class="thumbnail-container mx-1"
+              v-for="(file, idk) of files"
+              :key="idk"
+              @click="setCurrent(idk)"
+              style="cursor: pointer"
+            >
+              <img
+                :src="
+                  isVideo(file)
+                    ? require('@/assets/img/play-button-icon.png')
+                    : file.src
+                "
+                :alt="file.name"
+                :style="{ opacity: index === idk ? 1 : 0.6 }"
+              />
             </div>
           </div>
         </div>
@@ -124,7 +146,6 @@ export default {
       }
     },
     files(current) {
-      console.log({ current });
       this.videos = current.filter((f) => this.isVideo(f));
     },
   },
@@ -144,6 +165,11 @@ export default {
       if (this.isVideo(this.currentFile)) {
         this.loadPlayer();
       }
+    },
+    setCurrent(i) {
+      this.closePlayer();
+      this.index = i;
+      this.currentFile = this.files[i];
     },
     loadPlayer() {
       this.$nextTick(() => {
@@ -219,11 +245,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .gallery-container {
   display: flex;
   justify-content: space-between;
-  height: 700px;
+  height: 500px;
 }
 .gallery-body {
   justify-self: center;
@@ -250,5 +276,26 @@ export default {
   color: white;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+.thumbnails {
+  overflow-x: scroll;
+  font-size: 0.9rem;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.thumbnail-container {
+  background-color: white;
+  padding: 5px;
+  max-width: 150px;
+  position: relative;
+}
+.thumbnail-container img {
+  max-width: 140px;
+  max-height: 150px;
+  border: 1px solid rgb(117, 116, 116);
 }
 </style>
