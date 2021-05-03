@@ -5,8 +5,8 @@
     ref="openModal"
     class="btn btn-primary"
     style="display: none"
-    data-toggle="modal"
-    data-target="#exampleModalCenter"
+    data-bs-toggle="modal"
+    data-bs-target="#galleryModal"
   >
     Open
   </button>
@@ -15,10 +15,10 @@
   <div
     ref="modal"
     class="modal fade"
-    id="exampleModalCenter"
+    id="galleryModal"
     tabindex="-1"
     role="dialog"
-    aria-labelledby="exampleModalCenterTitle"
+    aria-labelledby="galleryModalTitle"
     aria-hidden="true"
   >
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
@@ -27,13 +27,11 @@
           <h5 class="modal-title" id="exampleModalLongTitle">Files Gallery</h5>
           <button
             type="button"
-            class="close"
-            data-dismiss="modal"
-            @click="closeModal"
+            class="btn-close"
+            data-bs-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+            @click="closeModal"
+          ></button>
         </div>
         <div class="modal-body">
           <div
@@ -134,6 +132,16 @@ export default {
     files(current) {
       this.videos = current.filter((f) => this.isVideo(f));
     },
+  },
+  mounted() {
+    document
+      .querySelector("#galleryModal")
+      .addEventListener("hidden.bs.modal", () => {
+        if (this.player) {
+          this.player.pause();
+          this.player = null;
+        }
+      });
   },
   methods: {
     isVideo,

@@ -45,7 +45,9 @@
       <p class="mt-2">Drag and Drop</p>
       <p>OR</p>
       <div class="file-input">
-        <label for="file">Select a file</label>
+        <label for="file"
+          ><i class="fas fa-hand-pointer"></i> Select a file</label
+        >
         <input
           type="file"
           id="file"
@@ -55,7 +57,7 @@
         />
       </div>
     </div>
-    <div class="thumbnails mt-5" v-show="files.length">
+    <div class="thumbnails mt-5 p-4" v-show="files.length">
       <div
         class="thumbnail-container ml-4 mt-3"
         v-for="(file, idk) of files"
@@ -326,7 +328,6 @@ progress {
   height: 18px;
 }
 .close {
-  background-color: white;
   position: absolute;
   /* right: 32px;
   top: 32px; */
