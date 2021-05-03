@@ -5,7 +5,6 @@ front_end/node_modules
 front_end/dist
 
 server/node_modules
-server/uploads/*
 server/public/*
 
 
