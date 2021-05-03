@@ -35,7 +35,9 @@
       <label for="file"
         ><i class="fas fa-hand-pointer"></i> Select a file</label
       >
-      <a @click="upload"><i class="fas fa-upload"></i> Upload</a>
+      <a @click="upload" :class="{ 'is-disabled': isLoading }"
+        ><i class="fas fa-upload"></i> Upload</a
+      >
     </div>
 
     <div v-show="!files.length">
@@ -137,7 +139,7 @@ export default {
       });
     },
     upload() {
-      if (this.files.length) {
+      if (this.files.length && !this.isLoading) {
         const formData = new FormData();
         formData.append("name", name.value);
         this.files.forEach((file) => {
@@ -329,6 +331,7 @@ export default {
   padding: 15px;
   cursor: pointer;
   margin-bottom: 0px !important;
+  text-decoration: none;
 }
 progress {
   height: 18px;
@@ -361,5 +364,11 @@ progress {
 }
 .close:after {
   transform: rotate(-45deg);
+}
+.is-disabled {
+  color: currentColor;
+  cursor: not-allowed !important;
+  opacity: 0.5;
+  text-decoration: none;
 }
 </style>
