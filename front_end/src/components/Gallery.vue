@@ -97,11 +97,11 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer">
+        <!-- <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
             Close
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -196,7 +196,7 @@ export default {
                 }
               );
         } catch (error) {
-          console.log({ error });
+          console.error({ error });
           this.errors.push(error.message);
         }
       });
@@ -249,7 +249,7 @@ export default {
 .gallery-container {
   display: flex;
   justify-content: space-between;
-  height: 500px;
+  height: 400px;
 }
 .gallery-body {
   justify-self: center;
@@ -284,7 +284,7 @@ export default {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: flex-start;
 }
 .thumbnail-container {
@@ -292,10 +292,10 @@ export default {
   padding: 5px;
   max-width: 150px;
   position: relative;
+  border: 1px solid rgb(117, 116, 116);
 }
 .thumbnail-container img {
   max-width: 140px;
   max-height: 150px;
-  border: 1px solid rgb(117, 116, 116);
 }
 </style>

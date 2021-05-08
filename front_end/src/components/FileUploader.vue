@@ -57,7 +57,12 @@
         />
       </div>
     </div>
-    <div class="thumbnails mt-5 p-4" v-show="files.length">
+    <transition-group
+      tag="div"
+      name="list"
+      class="thumbnails mt-5 p-4"
+      v-show="files.length"
+    >
       <div
         class="thumbnail-container mx-2 mt-3"
         v-for="(file, idk) of files"
@@ -76,7 +81,7 @@
           <span> <b>Size:</b> {{ bytesToSize(file.size) }}</span>
         </div>
       </div>
-    </div>
+    </transition-group>
   </div>
   <uploaded-files-list
     class="mt-4"
@@ -84,10 +89,7 @@
     :files="uploadedFiles"
     @load-gallery="openGallery($event, 0)"
   />
-  <gallery
-    :files="getFilesIntance().filter((f) => isImage(f) || isVideo(f))"
-    ref="gallery"
-  />
+  <gallery :files="getFilesIntance" ref="gallery" />
 </template>
 
 <script>
@@ -115,6 +117,12 @@ export default {
     uploadedFiles: [],
     loadLocal: 1,
   }),
+  computed: {
+    getFilesIntance() {
+      const files = this.loadLocal ? this.files : this.uploadedFiles;
+      return files.filter((f) => isImage(f) || isVideo(f));
+    },
+  },
   methods: {
     bytesToSize,
     isVideo,
@@ -128,9 +136,6 @@ export default {
         default:
           return require("@/assets/img/no-image-icon.png");
       }
-    },
-    getFilesIntance() {
-      return this.loadLocal ? this.files : this.uploadedFiles;
     },
     openGallery(file, loadValue = 1) {
       this.loadLocal = loadValue;
@@ -183,6 +188,7 @@ export default {
     deleteFile(e, index) {
       e.stopPropagation();
       this.files.splice(index, 1);
+      this.$refs.fileUploader.value = "";
     },
     selectFile(e) {
       const files = e.target.files;
@@ -287,7 +293,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: flex-start;
 }
 .thumbnail-container {
@@ -307,6 +313,11 @@ export default {
   align-items: flex-start;
   padding: 5px 10px;
   overflow-wrap: anywhere;
+}
+@media (max-width: 576px) {
+  .thumbnail-container {
+    max-width: 100%;
+  }
 }
 .card-deck .card img {
   width: 150px;
@@ -370,5 +381,29 @@ progress {
   cursor: not-allowed !important;
   opacity: 0.5;
   text-decoration: none;
+}
+/* list transition */
+.list-enter-from {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.list-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+.list-enter-active {
+  transition: all 0.4s ease;
+}
+.list-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.list-leave-active {
+  transition: all 0.4s ease;
+  position: absolute;
 }
 </style>
