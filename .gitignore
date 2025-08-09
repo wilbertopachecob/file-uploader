@@ -1,3 +1,29 @@
+# Node
+node_modules/
+server/node_modules/
+front_end/node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+
+# Env files
+server/.env
+front_end/.env
+
+# Logs
+server/logs/
+*.log
+
+# Build output
+server/public/
+
+# Uploads (keep folders, ignore files)
+server/uploads/**/*
+
+# Jest cache
+front_end/.jest-cache/
+.eslintcache
 .DS_Store
 !.gitkeep
 
