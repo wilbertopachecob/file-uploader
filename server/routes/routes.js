@@ -43,6 +43,15 @@ router.post("/upload-files", upload.array("files"), (req, res) => {
   res.json(req.files);
 });
 
+// Health check endpoint
+router.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 router.get("/uploads/video/:name", function (req, res) {
   // Ensure there is a range given for the video
   const range = req.headers.range;
