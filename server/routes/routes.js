@@ -13,27 +13,29 @@ const express = require("express"),
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    let dest = "./uploads/";
-    switch (true) {
-      case isVideo(file):
-        dest += "video";
-        break;
-      case isImage(file):
-        dest += "img";
-        break;
-      default:
-        dest += "misc";
-        break;
+    let dest = path.join(appDir, "uploads");
+    if (isVideo(file)) dest = path.join(dest, "video");
+    else if (isImage(file)) dest = path.join(dest, "img");
+    else dest = path.join(dest, "misc");
+    try {
+      if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+      }
+      cb(null, dest);
+    } catch (e) {
+      cb(e);
     }
-    if (!fs.existsSync(dest)) {
-      fs.mkdirSync(dest, { recursive: true });
-    }
-    cb(null, dest);
   },
   filename: function (req, file, cb) {
-    let name = file.originalname.split(".");
-    const ext = name.pop();
-    name = `${name.join("")}-${uuidv4()}.${ext}`;
+    // Strip path separators and collapse whitespace
+    const safeBase = String(file.originalname || "file")
+      .replace(/[\\/]/g, "_")
+      .replace(/\s+/g, " ")
+      .trim();
+    const dotIndex = safeBase.lastIndexOf(".");
+    const base = dotIndex > 0 ? safeBase.slice(0, dotIndex) : safeBase;
+    const ext = dotIndex > 0 ? safeBase.slice(dotIndex + 1) : (mime.extension(file.mimetype) || "bin");
+    const name = `${base}-${uuidv4()}.${ext}`;
     cb(null, name);
   },
 });
@@ -44,40 +46,56 @@ router.post("/upload-files", upload.array("files"), (req, res) => {
   res.json(req.files);
 });
 
+// Health check endpoint
+router.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 router.get("/uploads/video/:name", function (req, res) {
-  // Ensure there is a range given for the video
   const range = req.headers.range;
-  if (!range) {
-    return res.status(400).send("Requires Range header");
+  const name = req.params.name;
+  const videoPath = path.join(appDir, "uploads", "video", name);
+
+  if (!fs.existsSync(videoPath)) {
+    return res.status(404).json({ error: "Video not found" });
   }
 
-  const name = req.params.name;
-  const videoPath = `${appDir}/uploads/video/${name}`;
   const videoSize = fs.statSync(videoPath).size;
+  const contentType = mime.lookup(videoPath) || "application/octet-stream";
 
-  // Parse Range
-  // Example: "bytes=32324-"
-  const CHUNK_SIZE = 10 ** 6; // 1MB
-  const start = Number(range.replace(/\D/g, ""));
-  const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
+  // If the client did not request a specific range, stream the whole file.
+  if (!range) {
+    res.writeHead(200, {
+      "Content-Length": videoSize,
+      "Content-Type": contentType,
+      "Accept-Ranges": "bytes",
+    });
+    fs.createReadStream(videoPath).pipe(res);
+    return;
+  }
 
-  // Create headers
+  // Parse Range header (e.g., "bytes=32324-")
+  const CHUNK_SIZE = 10 ** 6; // 1MB default chunk size
+  const matches = /bytes=(\d+)-(\d*)/.exec(range);
+  const start = matches ? Number(matches[1]) : 0;
+  const requestedEnd = matches && matches[2] ? Number(matches[2]) : NaN;
+  const end = Number.isFinite(requestedEnd)
+    ? Math.min(requestedEnd, videoSize - 1)
+    : Math.min(start + CHUNK_SIZE, videoSize - 1);
+
   const contentLength = end - start + 1;
-  const headers = {
+  res.writeHead(206, {
     "Content-Range": `bytes ${start}-${end}/${videoSize}`,
     "Accept-Ranges": "bytes",
     "Content-Length": contentLength,
-    "Content-Type": mime.lookup(videoPath) || "application/octet-stream",
-  };
+    "Content-Type": contentType,
+  });
 
-  // HTTP Status 206 for Partial Content
-  res.writeHead(206, headers);
-
-  // create video read stream for this particular chunk
-  const videoStream = fs.createReadStream(videoPath, { start, end });
-
-  // Stream the video chunk to the client
-  videoStream.pipe(res);
+  fs.createReadStream(videoPath, { start, end }).pipe(res);
 });
 
 module.exports = router;

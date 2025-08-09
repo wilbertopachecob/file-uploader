@@ -1,5 +1,4 @@
-// Re-exported from TypeScript version for compatibility during migration
-import { imageTypes, videoTypes } from "./mimeTypes.js";
+import { imageTypes, videoTypes } from "@/mimeTypes";
 
 /**
  * @typedef {Object} ClientFile

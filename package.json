@@ -10,12 +10,13 @@
     "dev": "concurrently \"npm --prefix server run start\" \"npm --prefix front_end run serve\"",
     "typecheck": "concurrently \"npm --prefix front_end run typecheck\" \"npm --prefix server run typecheck\"",
     "lint": "eslint --ext .js,.ts,.vue front_end/src server --max-warnings 0",
-    "lint:fix": "eslint --ext .js,.ts,.vue front_end/src server --fix"
+    "lint:fix": "eslint --ext .js,.ts,.vue front_end/src server --fix",
+    "stop": "bash ./scripts/stop.sh"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
-    "concurrently": "^8.2.2",
+    "concurrently": "^9.2.0",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.4.0"

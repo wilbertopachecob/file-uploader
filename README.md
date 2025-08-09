@@ -2,6 +2,21 @@
 
 Simple file uploader with a Vue 3 frontend and a Node.js/Express backend.
 
+### Quick start (recommended)
+
+Using the root scripts to install dependencies and run both servers together:
+
+```
+# from project root
+npm run setup   # installs deps in server/ and front_end/
+npm run dev     # starts API (server/) and Vue dev server (front_end/) concurrently
+```
+
+- Frontend: http://localhost:8080
+- API: http://localhost:3000
+
+Ensure `front_end/.env` points to your API and `server/.env` has `DEV_HOST` set to your frontend origin (see Env vars below).
+
 ### Features
 - **Drag & drop uploads** with multiple file support
 - **Progress bar** during upload
@@ -21,6 +36,21 @@ file-uploader/
 ### Requirements
 - Node.js 14+ (recommended)
 - npm 6+
+
+### Root scripts
+
+From the project root you can orchestrate both apps:
+
+- `npm run setup` – install dependencies in `server/` and `front_end/`
+- `npm run dev` – run API and Vue dev server concurrently
+- `npm run build` – build the SPA into `server/public`
+- `npm run start` – start the API server (after building)
+
+There is also a convenience script that builds the frontend and starts the server:
+
+```
+./scripts/run.sh
+```
 
 ### Environment variables
 
@@ -42,6 +72,15 @@ VUE_APP_API_URL=http://localhost:3000
 ```
 
 ### Run in development
+Option A – use root scripts (single terminal):
+
+```
+npm run setup
+npm run dev
+```
+
+Option B – run separately:
+
 Run the API (Terminal A):
 ```
 cd server
@@ -62,7 +101,15 @@ npm run serve
 Ensure `front_end/.env` points to your API and `server/.env` has `DEV_HOST` set to your frontend origin.
 
 ### Build for production
-Build the SPA into `server/public`, then start the server which will serve the built assets and the API:
+Build the SPA into `server/public`, then start the server which will serve the built assets and the API.
+
+Option A – use root scripts:
+```
+npm run build
+npm run start
+```
+
+Option B – run commands manually:
 ```
 cd front_end
 npm install

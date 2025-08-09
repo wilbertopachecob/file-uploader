@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { isImage, isVideo, bytesToSize } from "../helpers";
+import { isImage, isVideo, bytesToSize } from "@/helpers";
 
 /**
  * @typedef {Object} ClientFile
@@ -65,9 +65,9 @@ export default {
     },
   },
   methods: {
-    bytesToSize,
     isImage,
     isVideo,
+    bytesToSize,
     /** @param {ClientFile} file */
     loadGallery(file) {
       this.$emit("load-gallery", file);
