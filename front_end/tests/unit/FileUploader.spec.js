@@ -21,7 +21,7 @@ describe("FileUploader.vue", () => {
     global.FileReader = MockFileReader;
   });
 
-  it("computes getFilesIntance for image/video only", async () => {
+  it("computes getFilesInstance for image/video only", async () => {
     const wrapper = mount(FileUploader);
     // simulate selecting files
     await wrapper.vm.addFiles([
@@ -30,7 +30,8 @@ describe("FileUploader.vue", () => {
       new File(["x"], "doc.pdf", { type: "application/pdf" }),
     ]);
     await wrapper.vm.$nextTick();
-    expect(wrapper.vm.getFilesIntance.length).toBe(2);
+    // Backward-compatible alias still exists, but prefer correct name
+    expect(wrapper.vm.getFilesInstance.length).toBe(2);
   });
 
   it("emits to open gallery when clicking a thumbnail", async () => {

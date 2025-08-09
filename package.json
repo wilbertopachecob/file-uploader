@@ -11,7 +11,7 @@
     "stop": "bash ./scripts/stop.sh"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^9.2.0"
   }
 }
 
