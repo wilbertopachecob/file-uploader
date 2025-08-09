@@ -15,7 +15,7 @@
     "axios": "^1.11.0",
     "bootstrap": "^5.3.3",
     "core-js": "^3.38.1",
-    "video.js": "^7.21.5",
+    "video.js": "^8.23.4",
     "vue": "^3.4.38"
   },
   "devDependencies": {
