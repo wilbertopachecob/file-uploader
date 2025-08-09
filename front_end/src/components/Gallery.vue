@@ -180,7 +180,7 @@ export default {
         };
         try {
           console.log(videojs.getPlayers());
-          document.querySelector(".gallery-body").children.forEach((el) => {
+          Array.from(document.querySelector(".gallery-body").children).forEach((el) => {
             if (el.id === `videoPlayer_${this.currentFile.name}`) {
               el.style.display = "block";
             }
@@ -230,7 +230,7 @@ export default {
         //this.player.dispose();
         this.player.pause();
         this.player = null;
-        document.querySelector(".gallery-body").children.forEach((el) => {
+        Array.from(document.querySelector(".gallery-body").children).forEach((el) => {
           if (el.classList.contains("video-js")) {
             el.style.display = "none";
           }
