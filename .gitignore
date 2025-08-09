@@ -30,3 +30,4 @@ server/access.log
 *.njsproj
 *.sln
 *.sw?
+node_modules

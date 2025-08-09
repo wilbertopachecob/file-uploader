@@ -146,7 +146,7 @@ export default {
     upload() {
       if (this.files.length && !this.isLoading) {
         const formData = new FormData();
-        formData.append("name", name.value);
+        // Optional: include additional fields here as needed
         this.files.forEach((file) => {
           formData.append("files", file);
         });
