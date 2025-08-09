@@ -241,7 +241,7 @@ export default {
   beforeUnmount() {
     try {
       const players = videojs.getPlayers();
-      Object.keys(players).forEach((key) => players[key].dispose());
+      Object.values(players).forEach((player) => player.dispose());
     } catch (e) {
       // ignore dispose errors in teardown
     }
