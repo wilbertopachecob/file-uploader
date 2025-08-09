@@ -1,0 +1,18 @@
+{
+  "name": "file-uploader",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Root scripts to run server and frontend",
+  "scripts": {
+    "setup": "npm --prefix server install && npm --prefix front_end install",
+    "start": "npm --prefix server run start",
+    "build": "npm --prefix front_end run build",
+    "dev": "concurrently \"npm --prefix server run start\" \"npm --prefix front_end run serve\"",
+    "stop": "bash ./scripts/stop.sh"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
+

@@ -20,7 +20,8 @@ export function bytesToSize(bytes) {
   if (!bytes || bytes < 0) return "0 Bytes";
   const unitIndex = Math.floor(Math.log(bytes) / Math.log(1024));
   const value = bytes / Math.pow(1024, unitIndex);
-  const rounded = unitIndex === 0 ? Math.round(value) : Math.round(value * 10) / 10;
+  const rounded =
+    unitIndex === 0 ? Math.round(value) : Math.round(value * 10) / 10;
   return `${rounded} ${units[unitIndex]}`;
 }
 

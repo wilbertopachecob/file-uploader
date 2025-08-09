@@ -40,17 +40,19 @@
           >
             <ul>
               <li v-for="(error, idk) in errors" :key="idk">
-                {{ error.message }}
+                {{
+                  typeof error === "string"
+                    ? error
+                    : (error && error.message) || String(error)
+                }}
               </li>
             </ul>
             <button
               type="button"
-              class="close"
-              data-dismiss="alert"
+              class="btn-close"
+              data-bs-dismiss="alert"
               aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+            ></button>
           </div>
           <div class="gallery-container">
             <div class="left-btn" @click="slide('left')">
@@ -60,14 +62,16 @@
               <img
                 v-if="isImage(currentFile)"
                 :src="currentFile.src"
-                :alt="currentFile.name"
+                :alt="getFileName(currentFile)"
               />
 
               <template v-for="(video, index) in videos" :key="index">
                 <video
-                  :ref="`videoPlayer_${video.name}`"
-                  v-show="currentFile.name === video.name"
-                  :id="`videoPlayer_${video.name}`"
+                  :ref="`videoPlayer_${getPlayerId(video, index)}`"
+                  v-show="
+                    getPlayerId(currentFile) === getPlayerId(video, index)
+                  "
+                  :id="`videoPlayer_${getPlayerId(video, index)}`"
                   class="video-js vjs-default-skin vjs-big-play-centered"
                   style="width: 100%; height: 100%"
                 ></video>
@@ -91,7 +95,7 @@
                     ? require('@/assets/img/play-button-icon.png')
                     : file.src
                 "
-                :alt="file.name"
+                :alt="getFileName(file)"
                 :style="{ opacity: index === idk ? 1 : 0.6 }"
               />
             </div>
@@ -130,12 +134,7 @@ export default {
       videoOptions: {
         autoplay: false,
         controls: true,
-        sources: [
-          {
-            src: require("@/assets/video/sample-mp4-file.mp4"),
-            type: "video/mp4",
-          },
-        ],
+        sources: [],
       },
     };
   },
@@ -145,8 +144,11 @@ export default {
         this.loadPlayer();
       }
     },
-    files(current) {
-      this.videos = current.filter((f) => this.isVideo(f));
+    files: {
+      immediate: true,
+      handler(current) {
+        this.videos = (current || []).filter((f) => this.isVideo(f));
+      },
     },
   },
   mounted() {
@@ -158,10 +160,33 @@ export default {
   methods: {
     isVideo,
     isImage,
+    getFileName(file) {
+      if (!file) return "";
+      if (file.name && typeof file.name === "string") return file.name;
+      if (file.src && typeof file.src === "string") {
+        try {
+          const parts = file.src.split("/");
+          const last = parts[parts.length - 1] || "";
+          return last.split("?")[0];
+        } catch (e) {
+          return "";
+        }
+      }
+      return "";
+    },
+    getPlayerId(file, index = 0) {
+      const name = this.getFileName(file);
+      const raw = name || String(index);
+      // Sanitize for safe use in HTML id attributes and ref keys
+      return raw.replace(/[^A-Za-z0-9_-]/g, "_");
+    },
     openModal(name = null) {
+      this.errors = [];
       this.$refs.openModal.click();
-      const index = this.files.findIndex((f) => f.name === name);
-      this.index = index || 0;
+      const index = this.files.findIndex(
+        (f) => f.name === name || this.getFileName(f) === name
+      );
+      this.index = index >= 0 ? index : 0;
       this.currentFile = this.files[this.index];
       if (this.isVideo(this.currentFile)) {
         this.loadPlayer();
@@ -179,26 +204,51 @@ export default {
           type: this.currentFile.type,
         };
         try {
-          console.log(videojs.getPlayers());
-          document.querySelector(".gallery-body").children.forEach((el) => {
-            if (el.id === `videoPlayer_${this.currentFile.name}`) {
-              el.style.display = "block";
+          // Compute the sanitized id used in the template refs
+          const derivedName = this.getFileName(this.currentFile);
+          let idSuffix = this.getPlayerId(this.currentFile);
+          if (!derivedName) {
+            const vIdx = this.videos.findIndex(
+              (v) => v === this.currentFile || v.src === this.currentFile.src
+            );
+            idSuffix = this.getPlayerId(this.currentFile, vIdx >= 0 ? vIdx : 0);
+          }
+          const playerRefKey = `videoPlayer_${idSuffix}`;
+          let playerEl = this.$refs[playerRefKey];
+          // When a ref is used inside v-for, Vue may return an array of elements
+          if (Array.isArray(playerEl)) {
+            playerEl = playerEl[0];
+          }
+          if (
+            !playerEl ||
+            !playerEl.tagName ||
+            playerEl.tagName.toUpperCase() !== "VIDEO"
+          ) {
+            // Element not yet in DOM or not a video element; bail out silently to avoid video.js error
+            console.warn("[Gallery.loadPlayer] player element not ready", {
+              playerRefKey,
+              playerElExists: Boolean(playerEl),
+              tagName: playerEl && playerEl.tagName,
+              availableRefs: Object.keys(this.$refs || {}),
+            });
+            return;
+          }
+
+          Array.from(document.querySelector(".gallery-body").children).forEach(
+            (el) => {
+              if (el.id === `videoPlayer_${idSuffix}`) {
+                el.style.display = "block";
+              }
             }
-          });
+          );
           this.player = Object.keys(videojs.getPlayers()).includes(
-            `videoPlayer_${this.currentFile.name}`
+            `videoPlayer_${idSuffix}`
           )
-            ? videojs.getPlayers()[`videoPlayer_${this.currentFile.name}`]
-            : videojs(
-                this.$refs[`videoPlayer_${this.currentFile.name}`],
-                this.videoOptions,
-                function onPlayerReady() {
-                  console.log("onPlayerReady", this);
-                }
-              );
+            ? videojs.getPlayers()[`videoPlayer_${idSuffix}`]
+            : videojs(playerEl, this.videoOptions);
         } catch (error) {
           console.error({ error });
-          this.errors.push(error.message);
+          this.errors.push(error);
         }
       });
     },
@@ -230,11 +280,13 @@ export default {
         //this.player.dispose();
         this.player.pause();
         this.player = null;
-        document.querySelector(".gallery-body").children.forEach((el) => {
-          if (el.classList.contains("video-js")) {
-            el.style.display = "none";
+        Array.from(document.querySelector(".gallery-body").children).forEach(
+          (el) => {
+            if (el.classList.contains("video-js")) {
+              el.style.display = "none";
+            }
           }
-        });
+        );
       }
     },
   },

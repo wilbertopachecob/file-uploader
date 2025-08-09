@@ -1,6 +1,6 @@
 const players = {};
 
-function videojs(el, options) {
+function videojs(el) {
   const id = typeof el === "string" ? el : (el && el.id) || "player";
   players[id] = {
     pause: () => {},
@@ -12,5 +12,3 @@ function videojs(el, options) {
 videojs.getPlayers = () => players;
 
 module.exports = videojs;
-
-
