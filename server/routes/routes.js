@@ -1,3 +1,4 @@
+// @ts-check
 const { isVideo, isImage } = require("../helpers");
 
 const express = require("express"),
