@@ -12,27 +12,29 @@ const express = require("express"),
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    let dest = "./uploads/";
-    switch (true) {
-      case isVideo(file):
-        dest += "video";
-        break;
-      case isImage(file):
-        dest += "img";
-        break;
-      default:
-        dest += "misc";
-        break;
+    let dest = path.join(appDir, "uploads");
+    if (isVideo(file)) dest = path.join(dest, "video");
+    else if (isImage(file)) dest = path.join(dest, "img");
+    else dest = path.join(dest, "misc");
+    try {
+      if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+      }
+      cb(null, dest);
+    } catch (e) {
+      cb(e);
     }
-    if (!fs.existsSync(dest)) {
-      fs.mkdirSync(dest, { recursive: true });
-    }
-    cb(null, dest);
   },
   filename: function (req, file, cb) {
-    let name = file.originalname.split(".");
-    const ext = name.pop();
-    name = `${name.join("")}-${uuidv4()}.${ext}`;
+    // Strip path separators and collapse whitespace
+    const safeBase = String(file.originalname || "file")
+      .replace(/[\\/]/g, "_")
+      .replace(/\s+/g, " ")
+      .trim();
+    const dotIndex = safeBase.lastIndexOf(".");
+    const base = dotIndex > 0 ? safeBase.slice(0, dotIndex) : safeBase;
+    const ext = dotIndex > 0 ? safeBase.slice(dotIndex + 1) : (mime.extension(file.mimetype) || "bin");
+    const name = `${base}-${uuidv4()}.${ext}`;
     cb(null, name);
   },
 });
@@ -55,7 +57,11 @@ router.get("/health", (req, res) => {
 router.get("/uploads/video/:name", function (req, res) {
   const range = req.headers.range;
   const name = req.params.name;
-  const videoPath = `${appDir}/uploads/video/${name}`;
+  const videoPath = path.join(appDir, "uploads", "video", name);
+
+  if (!fs.existsSync(videoPath)) {
+    return res.status(404).json({ error: "Video not found" });
+  }
 
   const videoSize = fs.statSync(videoPath).size;
   const contentType = mime.lookup(videoPath) || "application/octet-stream";
@@ -72,9 +78,13 @@ router.get("/uploads/video/:name", function (req, res) {
   }
 
   // Parse Range header (e.g., "bytes=32324-")
-  const CHUNK_SIZE = 10 ** 6; // 1MB
-  const start = Number(range.replace(/\D/g, ""));
-  const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
+  const CHUNK_SIZE = 10 ** 6; // 1MB default chunk size
+  const matches = /bytes=(\d+)-(\d*)/.exec(range);
+  const start = matches ? Number(matches[1]) : 0;
+  const requestedEnd = matches && matches[2] ? Number(matches[2]) : NaN;
+  const end = Number.isFinite(requestedEnd)
+    ? Math.min(requestedEnd, videoSize - 1)
+    : Math.min(start + CHUNK_SIZE, videoSize - 1);
 
   const contentLength = end - start + 1;
   res.writeHead(206, {

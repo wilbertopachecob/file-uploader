@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import FileUploader from "./components/FileUploader.vue";
+import FileUploader from "@/components/FileUploader.vue";
 
 export default {
   name: "App",

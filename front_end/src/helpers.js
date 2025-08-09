@@ -1,4 +1,4 @@
-import { imageTypes, videoTypes } from "./mimeTypes";
+import { imageTypes, videoTypes } from "@/mimeTypes";
 
 /**
  * @typedef {Object} ClientFile
