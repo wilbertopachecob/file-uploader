@@ -150,9 +150,10 @@ export default {
     },
   },
   mounted() {
-    document
-      .querySelector("#galleryModal")
-      .addEventListener("hidden.bs.modal", () => this.closePlayer());
+    const modal = document.querySelector("#galleryModal");
+    if (modal) {
+      modal.addEventListener("hidden.bs.modal", this.closePlayer);
+    }
   },
   methods: {
     isVideo,
@@ -238,8 +239,11 @@ export default {
     },
   },
   beforeUnmount() {
-    for (const player of videojs.getPlayers()) {
-      player.dispose();
+    try {
+      const players = videojs.getPlayers();
+      Object.keys(players).forEach((key) => players[key].dispose());
+    } catch (e) {
+      // ignore dispose errors in teardown
     }
   },
 };

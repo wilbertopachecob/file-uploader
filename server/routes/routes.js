@@ -24,6 +24,9 @@ const storage = multer.diskStorage({
         dest += "misc";
         break;
     }
+    if (!fs.existsSync(dest)) {
+      fs.mkdirSync(dest, { recursive: true });
+    }
     cb(null, dest);
   },
   filename: function (req, file, cb) {
@@ -32,10 +35,9 @@ const storage = multer.diskStorage({
     name = `${name.join("")}-${uuidv4()}.${ext}`;
     cb(null, name);
   },
-  limits: { fileSize: maxSize },
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage, limits: { fileSize: maxSize } });
 
 router.post("/upload-files", upload.array("files"), (req, res) => {
   res.json(req.files);
@@ -45,7 +47,7 @@ router.get("/uploads/video/:name", function (req, res) {
   // Ensure there is a range given for the video
   const range = req.headers.range;
   if (!range) {
-    res.status(400).send("Requires Range header");
+    return res.status(400).send("Requires Range header");
   }
 
   const name = req.params.name;
@@ -64,7 +66,7 @@ router.get("/uploads/video/:name", function (req, res) {
     "Content-Range": `bytes ${start}-${end}/${videoSize}`,
     "Accept-Ranges": "bytes",
     "Content-Length": contentLength,
-    "Content-Type": mime.lookup(videoPath),
+    "Content-Type": mime.lookup(videoPath) || "application/octet-stream",
   };
 
   // HTTP Status 206 for Partial Content
