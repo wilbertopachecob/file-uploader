@@ -9,7 +9,9 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": ["node"],
+    "checkJs": true,
+    "allowJs": true
   },
   "include": [
     "src/**/*.ts"
