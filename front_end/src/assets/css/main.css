@@ -156,9 +156,28 @@ progress[value]::-webkit-progress-value {
 .btn-success {
   background: linear-gradient(180deg, var(--success), #0ea372);
   border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.2;
+  min-width: auto;
 }
 .btn-success:hover { filter: brightness(1.05); }
-.btn-primary { border: none; }
+.btn-primary { 
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.2;
+  min-width: auto;
+}
+
+/* Ensure consistent button sizing in tables */
+.table .btn {
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.2;
+  min-width: auto;
+  white-space: nowrap;
+}
 
 /* Improve visibility for header hint */
 .card-header small.text-muted {
