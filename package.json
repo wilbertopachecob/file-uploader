@@ -1,5 +1,6 @@
 {
   "name": "file-uploader",
+  "type": "module",
   "private": true,
   "version": "1.0.0",
   "description": "Root scripts to run server and frontend",

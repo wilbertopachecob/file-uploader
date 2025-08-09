@@ -1,22 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2020",
     "module": "ESNext",
-    "strict": true,
-    "jsx": "preserve",
-    "moduleResolution": "Node",
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
     "baseUrl": ".",
-    "types": ["webpack-env", "jest"],
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
-    "lib": ["ESNext", "DOM", "DOM.Iterable", "ScriptHost"]
+    "types": ["vite/client", "vitest/globals"]
   },
   "include": [
     "src/**/*.ts",
@@ -25,7 +28,10 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
 
 

@@ -1,24 +1,8 @@
-export const imageTypes: string[] = [
-  "image/apng",
-  "image/avif",
-  "image/gif",
-  "image/jpeg",
-  "image/png",
-  "image/svg+xml",
-  "image/webp",
-];
+/**
+ * @deprecated Use SUPPORTED_MIME_TYPES from @/constants instead
+ * This file is kept for backward compatibility
+ */
+import { SUPPORTED_MIME_TYPES } from "@/constants";
 
-export const videoTypes: string[] = [
-  "application/vnd.apple.mpegurl",
-  "application/x-mpegurl",
-  "video/3gpp",
-  "video/mp4",
-  "video/mpeg",
-  "video/ogg",
-  "video/quicktime",
-  "video/webm",
-  "video/x-m4v",
-  "video/ms-asf",
-  "video/x-ms-wmv",
-  "video/x-msvideo",
-];
+export const imageTypes: readonly string[] = SUPPORTED_MIME_TYPES.IMAGES;
+export const videoTypes: readonly string[] = SUPPORTED_MIME_TYPES.VIDEOS;

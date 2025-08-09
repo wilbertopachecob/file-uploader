@@ -1,4 +1,5 @@
 import { mount } from "@vue/test-utils";
+import { vi } from "vitest";
 import Gallery from "@/components/Gallery.vue";
 import videojs from "video.js"; // mocked via jest.config.js
 
@@ -64,7 +65,7 @@ describe("Gallery.vue", () => {
     // Replace pause with a spy to assert it is called
     const player = wrapper.vm.player;
     if (player) {
-      player.pause = jest.fn();
+      player.pause = vi.fn();
       wrapper.vm.closePlayer();
       expect(player.pause).toHaveBeenCalled();
     } else {

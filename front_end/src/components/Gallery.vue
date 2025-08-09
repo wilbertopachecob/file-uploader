@@ -92,7 +92,7 @@
               <img
                 :src="
                   isVideo(file)
-                    ? require('@/assets/img/play-button-icon.png')
+                    ? playButtonIcon
                     : file.src
                 "
                 :alt="getFileName(file)"
@@ -116,6 +116,7 @@
 import "video.js/dist/video-js.css";
 import videojs from "video.js";
 import { isVideo, isImage } from "@/helpers";
+import playButtonIcon from "@/assets/img/play-button-icon.png";
 export default {
   props: {
     files: {
@@ -130,6 +131,7 @@ export default {
       show: false,
       currentFile: {},
       index: 0,
+      playButtonIcon,
       videos: [],
       player: null,
       videoOptions: {

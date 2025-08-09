@@ -97,8 +97,8 @@
 const MAXSIZE = 100 * 1024 * 1024;
 import { bytesToSize, isVideo, isImage } from "@/helpers";
 import axios from "axios";
-import UploadedFilesList from "@/components/UploadedFilesList";
-import Gallery from "@/components/Gallery";
+import UploadedFilesList from "@/components/UploadedFilesList.vue";
+import Gallery from "@/components/Gallery.vue";
 // Cache asset paths to avoid repeated require() calls at runtime
 import playButtonIcon from "@/assets/img/play-button-icon.png";
 import noImageIcon from "@/assets/img/no-image-icon.png";
