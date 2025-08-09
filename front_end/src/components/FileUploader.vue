@@ -140,7 +140,9 @@ export default {
     openGallery(file, loadValue = 1) {
       this.loadLocal = loadValue;
       this.$nextTick(() => {
-        const derivedName = file.name || (file.src ? file.src.split('/').pop().split('?')[0] : '');
+        const derivedName =
+          file.name ||
+          (file.src ? file.src.split("/").pop().split("?")[0] : "");
         this.$refs.gallery.openModal(derivedName);
       });
     },

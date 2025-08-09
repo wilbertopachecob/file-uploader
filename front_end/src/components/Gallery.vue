@@ -40,7 +40,11 @@
           >
             <ul>
               <li v-for="(error, idk) in errors" :key="idk">
-                {{ typeof error === 'string' ? error : (error && error.message) || String(error) }}
+                {{
+                  typeof error === "string"
+                    ? error
+                    : (error && error.message) || String(error)
+                }}
               </li>
             </ul>
             <button
@@ -64,7 +68,9 @@
               <template v-for="(video, index) in videos" :key="index">
                 <video
                   :ref="`videoPlayer_${getPlayerId(video, index)}`"
-                  v-show="getPlayerId(currentFile) === getPlayerId(video, index)"
+                  v-show="
+                    getPlayerId(currentFile) === getPlayerId(video, index)
+                  "
                   :id="`videoPlayer_${getPlayerId(video, index)}`"
                   class="video-js vjs-default-skin vjs-big-play-centered"
                   style="width: 100%; height: 100%"
@@ -170,7 +176,9 @@ export default {
     },
     getPlayerId(file, index = 0) {
       const name = this.getFileName(file);
-      return name || String(index);
+      const raw = name || String(index);
+      // Sanitize for safe use in HTML id attributes and ref keys
+      return raw.replace(/[^A-Za-z0-9_-]/g, "_");
     },
     openModal(name = null) {
       this.errors = [];
@@ -206,28 +214,30 @@ export default {
             idSuffix = String(vIdx >= 0 ? vIdx : 0);
           }
           const playerRefKey = `videoPlayer_${idSuffix}`;
-          const playerEl = this.$refs[playerRefKey];
-          if (!playerEl) {
-            // Element not yet in DOM; bail out silently to avoid video.js error
+          let playerEl = this.$refs[playerRefKey];
+          // When a ref is used inside v-for, Vue may return an array of elements
+          if (Array.isArray(playerEl)) {
+            playerEl = playerEl[0];
+          }
+          if (!playerEl || !(playerEl instanceof HTMLVideoElement)) {
+            // Element not yet in DOM or not a video element; bail out silently to avoid video.js error
             return;
           }
           console.log(videojs.getPlayers());
-          Array.from(document.querySelector(".gallery-body").children).forEach((el) => {
-            if (el.id === `videoPlayer_${idSuffix}`) {
-              el.style.display = "block";
+          Array.from(document.querySelector(".gallery-body").children).forEach(
+            (el) => {
+              if (el.id === `videoPlayer_${idSuffix}`) {
+                el.style.display = "block";
+              }
             }
-          });
+          );
           this.player = Object.keys(videojs.getPlayers()).includes(
             `videoPlayer_${idSuffix}`
           )
             ? videojs.getPlayers()[`videoPlayer_${idSuffix}`]
-            : videojs(
-                playerEl,
-                this.videoOptions,
-                function onPlayerReady() {
-                  console.log("onPlayerReady", this);
-                }
-              );
+            : videojs(playerEl, this.videoOptions, function onPlayerReady() {
+                console.log("onPlayerReady", this);
+              });
         } catch (error) {
           console.error({ error });
           this.errors.push(error);
@@ -262,11 +272,13 @@ export default {
         //this.player.dispose();
         this.player.pause();
         this.player = null;
-        Array.from(document.querySelector(".gallery-body").children).forEach((el) => {
-          if (el.classList.contains("video-js")) {
-            el.style.display = "none";
+        Array.from(document.querySelector(".gallery-body").children).forEach(
+          (el) => {
+            if (el.classList.contains("video-js")) {
+              el.style.display = "none";
+            }
           }
-        });
+        );
       }
     },
   },
