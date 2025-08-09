@@ -1,3 +1,4 @@
+// @ts-check
 const { imageTypes, videoTypes } = require("./mimeTypes");
 
 /**
@@ -14,6 +15,10 @@ const { imageTypes, videoTypes } = require("./mimeTypes");
  * @param {number} bytes - Raw byte count.
  * @returns {string} Human-readable size (e.g., "512 Bytes", "1.2 MB").
  */
+/**
+ * @param {number} bytes
+ * @returns {string}
+ */
 function bytesToSize(bytes) {
   const units = ["Bytes", "KB", "MB", "GB", "TB"];
   if (!bytes || bytes < 0) return "0 Bytes";
@@ -29,6 +34,10 @@ function bytesToSize(bytes) {
  * @param {UploadedFile} f - Multer file object.
  * @returns {boolean}
  */
+/**
+ * @param {UploadedFile} f
+ * @returns {boolean}
+ */
 function isImage(f) {
   return (
     f.mimetype &&
@@ -40,6 +49,10 @@ function isImage(f) {
  * Determine if an uploaded file is a video based on its MIME type.
  *
  * @param {UploadedFile} f - Multer file object.
+ * @returns {boolean}
+ */
+/**
+ * @param {UploadedFile} f
  * @returns {boolean}
  */
 function isVideo(f) {
