@@ -1,12 +1,9 @@
 import { shallowMount } from "@vue/test-utils";
-import HelloWorld from "@/components/HelloWorld.vue";
+import FileUploader from "@/components/FileUploader.vue";
 
-describe("HelloWorld.vue", () => {
-  it("renders props.msg when passed", () => {
-    const msg = "new message";
-    const wrapper = shallowMount(HelloWorld, {
-      props: { msg },
-    });
-    expect(wrapper.text()).toMatch(msg);
+describe("FileUploader.vue", () => {
+  it("renders the drop area", () => {
+    const wrapper = shallowMount(FileUploader);
+    expect(wrapper.text()).toContain("Drag and Drop");
   });
 });
