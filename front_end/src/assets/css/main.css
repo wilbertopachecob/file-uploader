@@ -133,27 +133,6 @@ progress[value]::-webkit-progress-value {
 .thumbnail-container.is-video {
   position: relative;
 }
-.thumbnail-container.is-video::before {
-  content: "";
-  position: absolute;
-  inset: var(--space-3);
-  background: radial-gradient(circle at center, rgba(0,0,0,0.05), rgba(0,0,0,0.25));
-  border-radius: 8px;
-  pointer-events: none;
-}
-.thumbnail-container.is-video::after {
-  content: "\f04b"; /* FontAwesome play icon */
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: rgba(255,255,255,0.95);
-  text-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  font-size: 2rem;
-  pointer-events: none;
-}
 .thumbnail-container img {
   width: 100%;
   height: 150px;

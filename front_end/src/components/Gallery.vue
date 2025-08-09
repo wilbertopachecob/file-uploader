@@ -204,54 +204,11 @@ export default {
       const closeButton = modal.querySelector(".btn-close");
       if (closeButton) {
         closeButton.addEventListener("click", (e) => {
-          // eslint-disable-next-line no-console
-          console.log("Close button clicked!", e);
           e.preventDefault();
           e.stopPropagation();
           this.closeModal();
         });
       }
-
-      // Debug: Add listeners to all clickable elements
-      const leftBtn = modal.querySelector(".left-btn");
-      const rightBtn = modal.querySelector(".right-btn");
-
-      if (leftBtn) {
-        leftBtn.addEventListener("click", (e) => {
-          // eslint-disable-next-line no-console
-          console.log("Left button clicked!", e);
-        });
-      }
-
-      if (rightBtn) {
-        rightBtn.addEventListener("click", (e) => {
-          // eslint-disable-next-line no-console
-          console.log("Right button clicked!", e);
-        });
-      }
-
-      // Debug: Listen to all clicks in modal
-      modal.addEventListener("click", (e) => {
-        // eslint-disable-next-line no-console
-        console.log("Modal click detected:", {
-          target: e.target,
-          currentTarget: e.currentTarget,
-          tagName: e.target.tagName,
-          className: e.target.className,
-          id: e.target.id,
-        });
-      });
-
-      // Global click listener to debug ALL clicks
-      document.addEventListener("click", (e) => {
-        // eslint-disable-next-line no-console
-        console.log("GLOBAL click detected:", {
-          target: e.target.tagName,
-          className: e.target.className,
-          id: e.target.id,
-          coordinates: `${e.clientX}, ${e.clientY}`,
-        });
-      });
     }
   },
   beforeUnmount() {
@@ -337,15 +294,8 @@ export default {
       this.$nextTick(() => {
         try {
           const modalEl = this.$refs.modal;
-          // eslint-disable-next-line no-console
-          console.log("Modal element:", modalEl);
-          // eslint-disable-next-line no-console
-          console.log("Modal class available:", !!Modal);
-
           if (modalEl && Modal) {
             const modalInstance = Modal.getOrCreateInstance(modalEl);
-            // eslint-disable-next-line no-console
-            console.log("Modal instance created:", modalInstance);
             modalInstance.show();
 
             // Load video player after modal is shown
@@ -615,17 +565,16 @@ export default {
   justify-content: center;
   transition: all 0.2s ease;
   position: relative;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .modal-header .btn-close:hover {
   background: linear-gradient(135deg, #dc2626, #b91c1c);
   transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
 }
 
 .modal-header .btn-close:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+  outline: 2px solid rgba(239, 68, 68, 0.5);
+  outline-offset: 2px;
 }
 
 .modal-header .btn-close::before {
