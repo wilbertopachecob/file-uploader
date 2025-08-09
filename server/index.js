@@ -10,7 +10,7 @@ require("dotenv").config();
 const port = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: process.env.DEV_HOST,
+  origin: process.env.DEV_HOST || true,
   optionsSuccessStatus: 200,
 };
 
@@ -20,7 +20,13 @@ var accessLogStream = rfs.createStream("access.log", {
   path: path.join(__dirname, "logs"),
 });
 
-app.use(morgan("combined", { stream: accessLogStream }));
+// Log to rotating file in production-like envs; log to console in dev for readability
+const isProduction = process.env.NODE_ENV === "production";
+app.use(
+  isProduction
+    ? morgan("combined", { stream: accessLogStream })
+    : morgan("dev")
+);
 
 app.use(express.static("public"));
 app.use("/uploads/img", express.static("uploads/img"));

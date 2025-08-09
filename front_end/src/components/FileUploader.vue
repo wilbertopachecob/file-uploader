@@ -93,11 +93,15 @@
 </template>
 
 <script>
+// Maximum allowed upload size: 100MB
 const MAXSIZE = 100 * 1024 * 1024;
 import { bytesToSize, isVideo, isImage } from "../helpers";
 import axios from "axios";
 import UploadedFilesList from "./UploadedFilesList";
 import Gallery from "./Gallery";
+// Cache asset paths to avoid repeated require() calls at runtime
+import playButtonIcon from "@/assets/img/play-button-icon.png";
+import noImageIcon from "@/assets/img/no-image-icon.png";
 export default {
   name: "FileUploader",
   components: {
@@ -118,9 +122,14 @@ export default {
     loadLocal: 1,
   }),
   computed: {
+    // Keep misspelled name for backward compatibility with tests; provide alias below
     getFilesIntance() {
       const files = this.loadLocal ? this.files : this.uploadedFiles;
       return files.filter((f) => isImage(f) || isVideo(f));
+    },
+    // New correctly spelled alias; internal usage can adopt this gradually
+    getFilesInstance() {
+      return this.getFilesIntance;
     },
   },
   methods: {
@@ -128,14 +137,9 @@ export default {
     isVideo,
     isImage,
     getSRC(file) {
-      switch (true) {
-        case isImage(file):
-          return file.src;
-        case isVideo(file):
-          return require("@/assets/img/play-button-icon.png");
-        default:
-          return require("@/assets/img/no-image-icon.png");
-      }
+      if (isImage(file)) return file.src;
+      if (isVideo(file)) return playButtonIcon;
+      return noImageIcon;
     },
     openGallery(file, loadValue = 1) {
       this.loadLocal = loadValue;
@@ -202,7 +206,7 @@ export default {
     },
     dragOut(e) {
       e.preventDefault();
-      this.dragCount--;
+      this.dragCount = Math.max(0, this.dragCount - 1);
       if (!this.dragCount) {
         this.isDragging = false;
       }

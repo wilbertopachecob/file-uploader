@@ -44,8 +44,7 @@
 </template>
 
 <script>
-import { isImage, isVideo } from "../helpers";
-import { bytesToSize } from "../helpers";
+import { isImage, isVideo, bytesToSize } from "../helpers";
 export default {
   props: {
     files: {
@@ -54,9 +53,9 @@ export default {
     },
   },
   methods: {
-    bytesToSize,
     isImage,
     isVideo,
+    bytesToSize,
     loadGallery(file) {
       this.$emit("load-gallery", file);
     },
