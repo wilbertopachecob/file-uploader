@@ -53,39 +53,38 @@ router.get("/health", (req, res) => {
 });
 
 router.get("/uploads/video/:name", function (req, res) {
-  // Ensure there is a range given for the video
   const range = req.headers.range;
-  if (!range) {
-    return res.status(400).send("Requires Range header");
-  }
-
   const name = req.params.name;
   const videoPath = `${appDir}/uploads/video/${name}`;
-  const videoSize = fs.statSync(videoPath).size;
 
-  // Parse Range
-  // Example: "bytes=32324-"
+  const videoSize = fs.statSync(videoPath).size;
+  const contentType = mime.lookup(videoPath) || "application/octet-stream";
+
+  // If the client did not request a specific range, stream the whole file.
+  if (!range) {
+    res.writeHead(200, {
+      "Content-Length": videoSize,
+      "Content-Type": contentType,
+      "Accept-Ranges": "bytes",
+    });
+    fs.createReadStream(videoPath).pipe(res);
+    return;
+  }
+
+  // Parse Range header (e.g., "bytes=32324-")
   const CHUNK_SIZE = 10 ** 6; // 1MB
   const start = Number(range.replace(/\D/g, ""));
   const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
 
-  // Create headers
   const contentLength = end - start + 1;
-  const headers = {
+  res.writeHead(206, {
     "Content-Range": `bytes ${start}-${end}/${videoSize}`,
     "Accept-Ranges": "bytes",
     "Content-Length": contentLength,
-    "Content-Type": mime.lookup(videoPath) || "application/octet-stream",
-  };
+    "Content-Type": contentType,
+  });
 
-  // HTTP Status 206 for Partial Content
-  res.writeHead(206, headers);
-
-  // create video read stream for this particular chunk
-  const videoStream = fs.createReadStream(videoPath, { start, end });
-
-  // Stream the video chunk to the client
-  videoStream.pipe(res);
+  fs.createReadStream(videoPath, { start, end }).pipe(res);
 });
 
 module.exports = router;

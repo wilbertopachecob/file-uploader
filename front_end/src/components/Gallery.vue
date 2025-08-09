@@ -204,14 +204,14 @@ export default {
           type: this.currentFile.type,
         };
         try {
-          // Prefer name derived from file or src; fallback to video's index if needed
+          // Compute the sanitized id used in the template refs
           const derivedName = this.getFileName(this.currentFile);
-          let idSuffix = derivedName;
-          if (!idSuffix) {
+          let idSuffix = this.getPlayerId(this.currentFile);
+          if (!derivedName) {
             const vIdx = this.videos.findIndex(
               (v) => v === this.currentFile || v.src === this.currentFile.src
             );
-            idSuffix = String(vIdx >= 0 ? vIdx : 0);
+            idSuffix = this.getPlayerId(this.currentFile, vIdx >= 0 ? vIdx : 0);
           }
           const playerRefKey = `videoPlayer_${idSuffix}`;
           let playerEl = this.$refs[playerRefKey];
@@ -219,11 +219,21 @@ export default {
           if (Array.isArray(playerEl)) {
             playerEl = playerEl[0];
           }
-          if (!playerEl || !(playerEl instanceof HTMLVideoElement)) {
+          if (
+            !playerEl ||
+            !playerEl.tagName ||
+            playerEl.tagName.toUpperCase() !== "VIDEO"
+          ) {
             // Element not yet in DOM or not a video element; bail out silently to avoid video.js error
+            console.warn("[Gallery.loadPlayer] player element not ready", {
+              playerRefKey,
+              playerElExists: Boolean(playerEl),
+              tagName: playerEl && playerEl.tagName,
+              availableRefs: Object.keys(this.$refs || {}),
+            });
             return;
           }
-          console.log(videojs.getPlayers());
+          console.log("[Gallery.loadPlayer] existing players:", videojs.getPlayers());
           Array.from(document.querySelector(".gallery-body").children).forEach(
             (el) => {
               if (el.id === `videoPlayer_${idSuffix}`) {
@@ -236,7 +246,7 @@ export default {
           )
             ? videojs.getPlayers()[`videoPlayer_${idSuffix}`]
             : videojs(playerEl, this.videoOptions, function onPlayerReady() {
-                console.log("onPlayerReady", this);
+                console.log("[Gallery.loadPlayer] onPlayerReady", this && this.id);
               });
         } catch (error) {
           console.error({ error });
