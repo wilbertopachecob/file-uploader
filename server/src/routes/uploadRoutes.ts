@@ -8,6 +8,8 @@ import * as mime from 'mime-types';
 import { isVideo, isImage, sanitizeFilename } from '@/helpers/fileHelpers';
 import { UPLOAD_CONFIG, HttpStatus, ErrorMessages, SuccessMessages } from '@/constants';
 import type { UploadedFile, ApiResponse, HealthResponse } from '@/types';
+import { checkStorageLimits, getStorageInfo } from '@/middleware/storageMiddleware';
+import { rateLimitUploads } from '@/middleware/rateLimitMiddleware';
 
 const router = express.Router();
 const appDir = path.dirname(require.main?.filename || '');
@@ -65,9 +67,13 @@ const upload = multer({
 });
 
 /**
- * File upload endpoint
+ * File upload endpoint with security middleware
  */
-router.post('/upload-files', upload.array('files'), (req: Request, res: Response, next: NextFunction) => {
+router.post('/upload-files', 
+  rateLimitUploads,
+  upload.array('files'),
+  checkStorageLimits,
+  (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(HttpStatus.BAD_REQUEST).json({
@@ -110,35 +116,17 @@ router.get('/health', (req: Request, res: Response) => {
 router.get('/status', (req: Request, res: Response, next: NextFunction) => {
   try {
     const uploadsDir = path.join(appDir, 'uploads');
-    let fileCount = 0;
-    let totalSize = 0;
-    
-    if (fs.existsSync(uploadsDir)) {
-      const getDirectoryStats = (dir: string): void => {
-        const files = fs.readdirSync(dir);
-        files.forEach(file => {
-          const filePath = path.join(dir, file);
-          const stats = fs.statSync(filePath);
-          if (stats.isDirectory()) {
-            getDirectoryStats(filePath);
-          } else {
-            fileCount++;
-            totalSize += stats.size;
-          }
-        });
-      };
-      
-      getDirectoryStats(uploadsDir);
-    }
+    const storageInfo = getStorageInfo(uploadsDir);
     
     res.status(HttpStatus.OK).json({
       success: true,
       data: {
-        fileCount,
-        totalSize,
+        storage: storageInfo,
+        limits: {
+          maxFileSize: UPLOAD_CONFIG.MAX_FILE_SIZE,
+          maxFiles: UPLOAD_CONFIG.MAX_FILES,
+        },
         uploadsDirectory: uploadsDir,
-        maxFileSize: UPLOAD_CONFIG.MAX_FILE_SIZE,
-        maxFiles: UPLOAD_CONFIG.MAX_FILES,
       },
     } as ApiResponse);
     

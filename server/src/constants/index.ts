@@ -38,6 +38,10 @@ export enum ErrorMessages {
   DIRECTORY_CREATION_FAILED = 'Failed to create upload directory',
   TOO_MANY_FILES = 'Too many files uploaded',
   UNEXPECTED_FIELD = 'Unexpected field name',
+  STORAGE_QUOTA_EXCEEDED = 'Server storage quota exceeded',
+  USER_QUOTA_EXCEEDED = 'User storage quota exceeded',
+  INSUFFICIENT_STORAGE = 'Insufficient server storage available',
+  RATE_LIMIT_EXCEEDED = 'Rate limit exceeded',
 }
 
 // Success messages  
