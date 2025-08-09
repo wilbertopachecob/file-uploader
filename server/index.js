@@ -10,7 +10,7 @@ require("dotenv").config();
 const port = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: process.env.DEV_HOST,
+  origin: process.env.DEV_HOST || true,
   optionsSuccessStatus: 200,
 };
 
@@ -20,16 +20,39 @@ var accessLogStream = rfs.createStream("access.log", {
   path: path.join(__dirname, "logs"),
 });
 
-app.use(morgan("combined", { stream: accessLogStream }));
+// Log to rotating file in production-like envs; log to console in dev for readability
+const isProduction = process.env.NODE_ENV === "production";
+app.use(
+  isProduction
+    ? morgan("combined", { stream: accessLogStream })
+    : morgan("dev")
+);
 
-app.use(express.static("public"));
-app.use("/uploads/img", express.static("uploads/img"));
-app.use("/uploads/misc", express.static("uploads/misc"));
+// Security and static paths
+app.disable("x-powered-by");
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads/img", express.static(path.join(__dirname, "uploads", "img")));
+app.use("/uploads/misc", express.static(path.join(__dirname, "uploads", "misc")));
 
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
 app.use(router);
+
+// Centralized error handler
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  if (!err) return next();
+  const status = err.status || 500;
+  const message = err.message || "Internal Server Error";
+  if (!isProduction) {
+    // Log stack in development for easier debugging
+    // eslint-disable-next-line no-console
+    console.error(err);
+  }
+  res.status(status).json({ error: message });
+});
 
 app.listen(port);

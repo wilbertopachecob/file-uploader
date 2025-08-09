@@ -89,15 +89,19 @@
     :files="uploadedFiles"
     @load-gallery="openGallery($event, 0)"
   />
-  <gallery :files="getFilesIntance" ref="gallery" />
+  <gallery :files="getFilesInstance" ref="gallery" />
 </template>
 
 <script>
+// Maximum allowed upload size: 100MB
 const MAXSIZE = 100 * 1024 * 1024;
-import { bytesToSize, isVideo, isImage } from "../helpers";
+import { bytesToSize, isVideo, isImage } from "@/helpers";
 import axios from "axios";
-import UploadedFilesList from "./UploadedFilesList";
-import Gallery from "./Gallery";
+import UploadedFilesList from "@/components/UploadedFilesList";
+import Gallery from "@/components/Gallery";
+// Cache asset paths to avoid repeated require() calls at runtime
+import playButtonIcon from "@/assets/img/play-button-icon.png";
+import noImageIcon from "@/assets/img/no-image-icon.png";
 export default {
   name: "FileUploader",
   components: {
@@ -118,24 +122,45 @@ export default {
     loadLocal: 1,
   }),
   computed: {
-    getFilesIntance() {
+    getFilesInstance() {
       const files = this.loadLocal ? this.files : this.uploadedFiles;
       return files.filter((f) => isImage(f) || isVideo(f));
     },
+    getFilesIntance() {
+      return this.getFilesInstance;
+    },
   },
   methods: {
+    getApiBase() {
+      const envBase = process.env.VUE_APP_API_URL;
+      if (
+        typeof envBase === "string" &&
+        envBase.trim() !== "" &&
+        envBase !== "undefined" &&
+        envBase !== "null"
+      ) {
+        return envBase;
+      }
+      try {
+        if (
+          typeof window !== "undefined" &&
+          window.location &&
+          window.location.origin
+        ) {
+          return window.location.origin;
+        }
+      } catch (e) {
+        // ignore
+      }
+      return ""; // allow relative requests (same-origin)
+    },
     bytesToSize,
     isVideo,
     isImage,
     getSRC(file) {
-      switch (true) {
-        case isImage(file):
-          return file.src;
-        case isVideo(file):
-          return require("@/assets/img/play-button-icon.png");
-        default:
-          return require("@/assets/img/no-image-icon.png");
-      }
+      if (isImage(file)) return file.src;
+      if (isVideo(file)) return playButtonIcon;
+      return noImageIcon;
     },
     openGallery(file, loadValue = 1) {
       this.loadLocal = loadValue;
@@ -153,8 +178,9 @@ export default {
           formData.append("files", file);
         });
         this.isLoading = true;
+        const apiBase = this.getApiBase();
         axios
-          .post(`${process.env.VUE_APP_API_URL}/upload-files`, formData, {
+          .post(`${apiBase}/upload-files`, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -170,12 +196,18 @@ export default {
               this.uploadPercentage = 0;
             }, 1000);
             this.files = [];
+            const apiBase = this.getApiBase();
             res.data.forEach((f) => {
+              const mime = f.mimetype || "";
+              const isImg = mime.includes("image");
+              const isVid = mime.includes("video") || /mpegurl/i.test(mime);
+              const folder = isImg ? "img" : isVid ? "video" : "misc";
+              const src = `${apiBase}/uploads/${folder}/${f.filename}`;
               this.uploadedFiles.push({
                 name: f.filename,
                 size: f.size,
-                src: f.path,
-                type: f.mimetype,
+                src,
+                type: mime,
               });
             });
           })
@@ -202,7 +234,7 @@ export default {
     },
     dragOut(e) {
       e.preventDefault();
-      this.dragCount--;
+      this.dragCount = Math.max(0, this.dragCount - 1);
       if (!this.dragCount) {
         this.isDragging = false;
       }

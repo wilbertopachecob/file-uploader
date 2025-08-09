@@ -112,9 +112,10 @@
 </template>
 
 <script>
+// video.js is heavy; import CSS once and reuse player instances where possible
 import "video.js/dist/video-js.css";
 import videojs from "video.js";
-import { isVideo, isImage } from "../helpers";
+import { isVideo, isImage } from "@/helpers";
 export default {
   props: {
     files: {
@@ -241,11 +242,12 @@ export default {
               }
             }
           );
-          this.player = Object.keys(videojs.getPlayers()).includes(
-            `videoPlayer_${idSuffix}`
-          )
-            ? videojs.getPlayers()[`videoPlayer_${idSuffix}`]
-            : videojs(playerEl, this.videoOptions);
+          const existingPlayers = videojs.getPlayers();
+          const playerKey = `videoPlayer_${idSuffix}`;
+          this.player =
+            playerKey in existingPlayers
+              ? existingPlayers[playerKey]
+              : videojs(playerEl, this.videoOptions);
         } catch (error) {
           console.error({ error });
           this.errors.push(error);
@@ -277,7 +279,6 @@ export default {
     },
     closePlayer() {
       if (this.player) {
-        //this.player.dispose();
         this.player.pause();
         this.player = null;
         Array.from(document.querySelector(".gallery-body").children).forEach(
