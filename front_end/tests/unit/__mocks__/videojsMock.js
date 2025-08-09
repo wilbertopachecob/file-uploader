@@ -12,5 +12,3 @@ function videojs(el, options) {
 videojs.getPlayers = () => players;
 
 module.exports = videojs;
-
-
