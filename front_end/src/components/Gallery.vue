@@ -130,12 +130,8 @@ export default {
       videoOptions: {
         autoplay: false,
         controls: true,
-        sources: [
-          {
-            src: require("@/assets/video/sample-mp4-file.mp4"),
-            type: "video/mp4",
-          },
-        ],
+        // Initialized empty; populated dynamically from selected file in loadPlayer
+        sources: [],
       },
     };
   },
