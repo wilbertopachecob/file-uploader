@@ -1,5 +1,19 @@
 const { imageTypes, videoTypes } = require("./mimeTypes");
 
+/**
+ * @typedef {Object} UploadedFile
+ * @property {string} [mimetype] - MIME type of the uploaded file (e.g., "image/png", "video/mp4").
+ * @property {number} [size] - File size in bytes.
+ * @property {string} [originalname] - Original filename as uploaded by the client.
+ */
+
+/**
+ * Convert a number of bytes into a human-readable string.
+ * Uses base-1024 units and up to 1 decimal for KB and above.
+ *
+ * @param {number} bytes - Raw byte count.
+ * @returns {string} Human-readable size (e.g., "512 Bytes", "1.2 MB").
+ */
 function bytesToSize(bytes) {
   const units = ["Bytes", "KB", "MB", "GB", "TB"];
   if (!bytes || bytes < 0) return "0 Bytes";
@@ -9,6 +23,12 @@ function bytesToSize(bytes) {
   return `${rounded} ${units[unitIndex]}`;
 }
 
+/**
+ * Determine if an uploaded file is an image based on its MIME type.
+ *
+ * @param {UploadedFile} f - Multer file object.
+ * @returns {boolean}
+ */
 function isImage(f) {
   return (
     f.mimetype &&
@@ -16,6 +36,12 @@ function isImage(f) {
   );
 }
 
+/**
+ * Determine if an uploaded file is a video based on its MIME type.
+ *
+ * @param {UploadedFile} f - Multer file object.
+ * @returns {boolean}
+ */
 function isVideo(f) {
   return (
     f.mimetype &&

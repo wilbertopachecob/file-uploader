@@ -1,3 +1,7 @@
+/**
+ * List of recognized image MIME types.
+ * @type {string[]}
+ */
 export const imageTypes = [
   "image/apng",
   "image/avif",
@@ -7,6 +11,10 @@ export const imageTypes = [
   "image/svg+xml",
   "image/webp",
 ];
+/**
+ * List of recognized video MIME types.
+ * @type {string[]}
+ */
 export const videoTypes = [
   "application/vnd.apple.mpegurl",
   "application/x-mpegurl",
