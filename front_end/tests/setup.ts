@@ -1,16 +1,16 @@
 import { config } from '@vue/test-utils'
-import { vi } from 'vitest'
+import { vi, beforeEach } from 'vitest'
 
 // Mock modules that cause issues in testing
 vi.mock('@/assets/img/play-button-icon.png', () => ({
   default: '/mocked-play-button.png'
 }))
 
-const mockPlayers = {}
+const mockPlayers: Record<string, any> = {}
 
 const createMockPlayer = (element: any, options?: any) => {
   const player = {
-    ready: vi.fn((callback) => callback()),
+    ready: vi.fn((callback: any) => callback()),
     play: vi.fn(),
     pause: vi.fn(),
     dispose: vi.fn(),
@@ -22,7 +22,7 @@ const createMockPlayer = (element: any, options?: any) => {
   return player
 }
 
-const mockVideoJs = vi.fn(createMockPlayer)
+const mockVideoJs = vi.fn(createMockPlayer) as any
 mockVideoJs.getPlayers = vi.fn(() => mockPlayers)
 
 vi.mock('video.js', () => ({
@@ -30,16 +30,20 @@ vi.mock('video.js', () => ({
 }))
 
 // Mock FileReader for file uploads
-global.FileReader = class MockFileReader {
-  constructor() {
-    this.onload = null;
-  }
+interface MockFileReader {
+  onload: ((event: any) => void) | null;
+  readAsDataURL(): void;
+}
+
+(globalThis as any).FileReader = class MockFileReader implements MockFileReader {
+  onload: ((event: any) => void) | null = null;
+  
   readAsDataURL() {
     if (typeof this.onload === 'function') {
       this.onload({ target: { result: 'data:mock' } });
     }
   }
-} as any
+}
 
 // Global test setup
 config.global.mocks = {

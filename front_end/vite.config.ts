@@ -4,6 +4,8 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  root: '.',
+  publicDir: 'public',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
@@ -12,6 +14,9 @@ export default defineConfig({
   build: {
     outDir: '../server/public',
     emptyOutDir: true,
+    rollupOptions: {
+      input: 'index.html'
+    }
   },
   test: {
     globals: true,

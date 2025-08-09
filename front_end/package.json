@@ -9,8 +9,8 @@
     "watch": "vite build --outDir ../server/public --watch",
     "test:unit": "vitest",
     "typecheck": "vue-tsc --noEmit",
-    "lint": "eslint src --ext .ts,.vue",
-    "lint:fix": "eslint src --ext .ts,.vue --fix"
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
