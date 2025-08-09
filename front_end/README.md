@@ -1,29 +1,23 @@
-# upload-file
+## Frontend (Vue 3)
 
-## Project setup
+See the root `README.md` for full setup, environment variables, and API details.
+
+### Quick start
 ```
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Build
+Builds to `../server/public` so the Express server can serve the SPA:
 ```
 npm run build
 ```
 
-### Run your unit tests
+### Test & Lint
 ```
 npm run test:unit
-```
-
-### Lints and fixes files
-```
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+For Vue CLI configuration, see the official docs: https://cli.vuejs.org/config/
