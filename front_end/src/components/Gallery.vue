@@ -244,10 +244,7 @@ export default {
           );
           const existingPlayers = videojs.getPlayers();
           const playerKey = `videoPlayer_${idSuffix}`;
-          this.player = Object.prototype.hasOwnProperty.call(
-            existingPlayers,
-            playerKey
-          )
+          this.player = playerKey in existingPlayers
             ? existingPlayers[playerKey]
             : videojs(playerEl, this.videoOptions);
         } catch (error) {

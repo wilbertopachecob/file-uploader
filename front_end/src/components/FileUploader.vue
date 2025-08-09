@@ -89,7 +89,7 @@
     :files="uploadedFiles"
     @load-gallery="openGallery($event, 0)"
   />
-  <gallery :files="getFilesIntance" ref="gallery" />
+  <gallery :files="getFilesInstance" ref="gallery" />
 </template>
 
 <script>
@@ -122,14 +122,12 @@ export default {
     loadLocal: 1,
   }),
   computed: {
-    // Keep misspelled name for backward compatibility with tests; provide alias below
-    getFilesIntance() {
+    getFilesInstance() {
       const files = this.loadLocal ? this.files : this.uploadedFiles;
       return files.filter((f) => isImage(f) || isVideo(f));
     },
-    // New correctly spelled alias; internal usage can adopt this gradually
-    getFilesInstance() {
-      return this.getFilesIntance;
+    getFilesIntance() {
+      return this.getFilesInstance;
     },
   },
   methods: {
