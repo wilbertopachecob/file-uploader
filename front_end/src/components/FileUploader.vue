@@ -131,6 +131,29 @@ export default {
     },
   },
   methods: {
+    getApiBase() {
+      const envBase = process.env.VUE_APP_API_URL;
+      if (
+        typeof envBase === "string" &&
+        envBase.trim() !== "" &&
+        envBase !== "undefined" &&
+        envBase !== "null"
+      ) {
+        return envBase;
+      }
+      try {
+        if (
+          typeof window !== "undefined" &&
+          window.location &&
+          window.location.origin
+        ) {
+          return window.location.origin;
+        }
+      } catch (e) {
+        // ignore
+      }
+      return ""; // allow relative requests (same-origin)
+    },
     bytesToSize,
     isVideo,
     isImage,
@@ -155,8 +178,9 @@ export default {
           formData.append("files", file);
         });
         this.isLoading = true;
+        const apiBase = this.getApiBase();
         axios
-          .post(`${process.env.VUE_APP_API_URL}/upload-files`, formData, {
+          .post(`${apiBase}/upload-files`, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -172,12 +196,18 @@ export default {
               this.uploadPercentage = 0;
             }, 1000);
             this.files = [];
+            const apiBase = this.getApiBase();
             res.data.forEach((f) => {
+              const mime = f.mimetype || "";
+              const isImg = mime.includes("image");
+              const isVid = mime.includes("video") || /mpegurl/i.test(mime);
+              const folder = isImg ? "img" : isVid ? "video" : "misc";
+              const src = `${apiBase}/uploads/${folder}/${f.filename}`;
               this.uploadedFiles.push({
                 name: f.filename,
                 size: f.size,
-                src: f.path,
-                type: f.mimetype,
+                src,
+                type: mime,
               });
             });
           })

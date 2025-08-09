@@ -244,9 +244,10 @@ export default {
           );
           const existingPlayers = videojs.getPlayers();
           const playerKey = `videoPlayer_${idSuffix}`;
-          this.player = playerKey in existingPlayers
-            ? existingPlayers[playerKey]
-            : videojs(playerEl, this.videoOptions);
+          this.player =
+            playerKey in existingPlayers
+              ? existingPlayers[playerKey]
+              : videojs(playerEl, this.videoOptions);
         } catch (error) {
           console.error({ error });
           this.errors.push(error);
