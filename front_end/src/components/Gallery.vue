@@ -115,7 +115,7 @@
 // video.js is heavy; import CSS once and reuse player instances where possible
 import "video.js/dist/video-js.css";
 import videojs from "video.js";
-import { isVideo, isImage } from "../helpers";
+import { isVideo, isImage } from "@/helpers";
 export default {
   props: {
     files: {

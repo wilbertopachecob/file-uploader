@@ -95,10 +95,10 @@
 <script>
 // Maximum allowed upload size: 100MB
 const MAXSIZE = 100 * 1024 * 1024;
-import { bytesToSize, isVideo, isImage } from "../helpers";
+import { bytesToSize, isVideo, isImage } from "@/helpers";
 import axios from "axios";
-import UploadedFilesList from "./UploadedFilesList";
-import Gallery from "./Gallery";
+import UploadedFilesList from "@/components/UploadedFilesList";
+import Gallery from "@/components/Gallery";
 // Cache asset paths to avoid repeated require() calls at runtime
 import playButtonIcon from "@/assets/img/play-button-icon.png";
 import noImageIcon from "@/assets/img/no-image-icon.png";

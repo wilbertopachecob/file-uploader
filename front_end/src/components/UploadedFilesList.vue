@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { isImage, isVideo, bytesToSize } from "../helpers";
+import { isImage, isVideo, bytesToSize } from "@/helpers";
 export default {
   props: {
     files: {
