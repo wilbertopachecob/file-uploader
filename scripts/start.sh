@@ -9,6 +9,8 @@ SERVER_DIR="$ROOT_DIR/server"
 echo "[start.sh] Building frontend..."
 cd "$FRONTEND_DIR"
 npm install --no-audit --no-fund
+# Auto-fix lint issues before building to avoid build failures due to formatting
+npm run lint -- --fix
 npm run build
 
 echo "[start.sh] Starting server..."

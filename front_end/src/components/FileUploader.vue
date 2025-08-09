@@ -165,7 +165,6 @@ export default {
             },
           })
           .then((res) => {
-            console.log(res.data);
             setTimeout(() => {
               this.isLoading = false;
               this.uploadPercentage = 0;

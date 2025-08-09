@@ -233,7 +233,7 @@ export default {
             });
             return;
           }
-          console.log("[Gallery.loadPlayer] existing players:", videojs.getPlayers());
+
           Array.from(document.querySelector(".gallery-body").children).forEach(
             (el) => {
               if (el.id === `videoPlayer_${idSuffix}`) {
@@ -245,9 +245,7 @@ export default {
             `videoPlayer_${idSuffix}`
           )
             ? videojs.getPlayers()[`videoPlayer_${idSuffix}`]
-            : videojs(playerEl, this.videoOptions, function onPlayerReady() {
-                console.log("[Gallery.loadPlayer] onPlayerReady", this && this.id);
-              });
+            : videojs(playerEl, this.videoOptions);
         } catch (error) {
           console.error({ error });
           this.errors.push(error);

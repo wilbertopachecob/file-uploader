@@ -24,7 +24,11 @@ describe("FileUploader.vue", () => {
   it("computes getFilesIntance for image/video only", async () => {
     const wrapper = mount(FileUploader);
     // simulate selecting files
-    await wrapper.vm.addFiles([imageFile, videoFile, new File(["x"], "doc.pdf", { type: "application/pdf" })]);
+    await wrapper.vm.addFiles([
+      imageFile,
+      videoFile,
+      new File(["x"], "doc.pdf", { type: "application/pdf" }),
+    ]);
     await wrapper.vm.$nextTick();
     expect(wrapper.vm.getFilesIntance.length).toBe(2);
   });
@@ -36,8 +40,12 @@ describe("FileUploader.vue", () => {
     const thumb = wrapper.find(".thumbnail-container");
     expect(thumb.exists()).toBe(true);
     // The actual modal open is handled in child; ensure handler does not throw
-    expect(() => wrapper.vm.openGallery({ name: "pic.png", type: "image/png", src: "data:..." })).not.toThrow();
+    expect(() =>
+      wrapper.vm.openGallery({
+        name: "pic.png",
+        type: "image/png",
+        src: "data:...",
+      })
+    ).not.toThrow();
   });
 });
-
-

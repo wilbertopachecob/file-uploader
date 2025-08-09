@@ -2,8 +2,18 @@ import { mount } from "@vue/test-utils";
 import UploadedFilesList from "@/components/UploadedFilesList.vue";
 
 const files = [
-  { name: "pic.png", type: "image/png", size: 1000, src: "/uploads/img/pic.png" },
-  { name: "video.mp4", type: "video/mp4", size: 2000, src: "/uploads/video/video.mp4" },
+  {
+    name: "pic.png",
+    type: "image/png",
+    size: 1000,
+    src: "/uploads/img/pic.png",
+  },
+  {
+    name: "video.mp4",
+    type: "video/mp4",
+    size: 2000,
+    src: "/uploads/video/video.mp4",
+  },
 ];
 
 describe("UploadedFilesList.vue", () => {
@@ -22,5 +32,3 @@ describe("UploadedFilesList.vue", () => {
     expect(wrapper.emitted()["load-gallery"][0][0]).toEqual(files[0]);
   });
 });
-
-

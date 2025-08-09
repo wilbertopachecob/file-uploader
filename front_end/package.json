@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "prebuild": "vue-cli-service lint --fix",
     "build": "vue-cli-service build --dest ../server/public",
     "watch": "vue-cli-service build --dest ../server/public --watch",
     "test:unit": "vue-cli-service test:unit",
