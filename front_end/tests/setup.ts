@@ -11,8 +11,8 @@ vi.mock('@/assets/img/no-image-icon.png', () => ({
 }))
 
 // Mock require for assets (since some components use require instead of import)
-const originalRequire = globalThis.require
-globalThis.require = vi.fn((id: string) => {
+const originalRequire = (globalThis as any).require
+;(globalThis as any).require = vi.fn((id: string) => {
   if (id.includes('@/assets/img/play-button-icon.png')) {
     return '/mocked-play-button.png'
   }

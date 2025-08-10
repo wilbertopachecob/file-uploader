@@ -2,18 +2,9 @@ import { Request, Response } from 'express';
 import { MulterError } from 'multer';
 
 /**
- * Uploaded file interface (extends Multer's File interface)
+ * Uploaded file interface - alias for Express.Multer.File for semantic clarity
  */
-export interface UploadedFile extends Express.Multer.File {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  destination: string;
-  filename: string;
-  path: string;
-  size: number;
-}
+export interface UploadedFile extends Express.Multer.File {}
 
 /**
  * API Error response

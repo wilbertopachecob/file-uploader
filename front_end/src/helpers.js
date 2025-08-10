@@ -1,4 +1,4 @@
-import { imageTypes, videoTypes } from "@/mimeTypes";
+import { SUPPORTED_MIME_TYPES } from "@/constants";
 
 /**
  * @typedef {Object} ClientFile
@@ -35,7 +35,7 @@ export function isImage(f) {
   return !!(
     f &&
     f.type &&
-    (imageTypes.includes(f.type) || f.type.includes("image"))
+    (SUPPORTED_MIME_TYPES.IMAGES.includes(f.type) || f.type.includes("image"))
   );
 }
 
@@ -49,7 +49,7 @@ export function isVideo(f) {
   return !!(
     f &&
     f.type &&
-    (videoTypes.includes(f.type) || f.type.includes("video"))
+    (SUPPORTED_MIME_TYPES.VIDEOS.includes(f.type) || f.type.includes("video"))
   );
 }
 

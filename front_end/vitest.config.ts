@@ -18,9 +18,5 @@ export default defineConfig({
     reporter: process.env.CI ? ['default'] : ['verbose'],
     silent: !!process.env.CI,
     run: !!process.env.CI,
-    // Mock assets
-    alias: {
-      '\\.(png|jpg|jpeg|gif|svg)$': 'test-file-stub',
-    },
   },
 })
