@@ -1,8 +1,11 @@
 module.exports = {
   preset: "@vue/cli-plugin-unit-jest",
   transform: {
-    "^.+\\.vue$": "vue-jest",
+    "^.+\\.vue$": "@vue/vue3-jest",
   },
+  transformIgnorePatterns: [
+    "node_modules/(?!(axios)/)"
+  ],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
     "\\.(css|less|sass|scss)$": "<rootDir>/tests/unit/__mocks__/styleMock.js",
