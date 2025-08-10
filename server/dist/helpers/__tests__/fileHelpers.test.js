@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const globals_1 = require("@jest/globals");
 const fileHelpers_1 = require("../fileHelpers");
-const constants_1 = require("@/constants");
+const constants_1 = require("../../constants");
 (0, globals_1.describe)('fileHelpers', () => {
     (0, globals_1.describe)('bytesToSize', () => {
         (0, globals_1.it)('converts bytes to human readable format', () => {

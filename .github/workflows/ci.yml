@@ -28,10 +28,13 @@ jobs:
       - name: Build frontend
         run: npm run build
         working-directory: front_end
+      - name: Build server
+        run: npm run build
+        working-directory: server
       - name: Start server
         run: npm start & sleep 5
         working-directory: server
       - name: Run unit tests (frontend)
-        run: npm run test:unit -- --ci --reporters=default --silent
+        run: npm run test:ci
         working-directory: front_end
 

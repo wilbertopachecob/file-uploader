@@ -42,8 +42,8 @@ const morgan_1 = __importDefault(require("morgan"));
 const path = __importStar(require("path"));
 const rotating_file_stream_1 = __importDefault(require("rotating-file-stream"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const uploadRoutes_1 = __importDefault(require("@/routes/uploadRoutes"));
-const constants_1 = require("@/constants");
+const uploadRoutes_1 = __importDefault(require("./routes/uploadRoutes"));
+const constants_1 = require("./constants");
 // Load environment variables
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -134,7 +134,7 @@ app.use((err, req, res, next) => {
     res.status(status).json({
         success: false,
         error: message,
-        ...(isProduction ? {} : { stack: err instanceof Error && typeof err.stack === 'string' && err.stack.length > 0 ? err.stack : undefined }),
+        ...(isProduction ? {} : { stack: err instanceof Error ? err.stack : undefined }),
     });
 });
 /**

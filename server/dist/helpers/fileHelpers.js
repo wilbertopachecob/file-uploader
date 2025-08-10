@@ -9,7 +9,7 @@ exports.getUploadDirectory = getUploadDirectory;
 exports.isValidFileSize = isValidFileSize;
 exports.isValidFileType = isValidFileType;
 exports.sanitizeFilename = sanitizeFilename;
-const constants_1 = require("@/constants");
+const constants_1 = require("../constants");
 /**
  * Convert a number of bytes into a human-readable string.
  * Uses base-1024 units and up to 1 decimal for KB and above.

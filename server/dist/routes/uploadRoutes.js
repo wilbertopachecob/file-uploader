@@ -42,8 +42,8 @@ const multer_1 = __importStar(require("multer"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const mime = __importStar(require("mime-types"));
-const fileHelpers_1 = require("@/helpers/fileHelpers");
-const constants_1 = require("@/constants");
+const fileHelpers_1 = require("../helpers/fileHelpers");
+const constants_1 = require("../constants");
 const router = express_1.default.Router();
 const appDir = path.dirname(require.main?.filename || '');
 /**
