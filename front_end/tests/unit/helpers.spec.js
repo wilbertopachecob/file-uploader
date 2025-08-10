@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import {
   bytesToSize,
   isImage,
@@ -93,17 +94,17 @@ describe("helpers.js", () => {
 
     beforeEach(() => {
       // Reset all mocks
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       // Mock canvas context
       mockContext = {
-        drawImage: jest.fn(),
+        drawImage: vi.fn(),
       };
 
       // Mock canvas
       mockCanvas = {
-        getContext: jest.fn(() => mockContext),
-        toDataURL: jest.fn(() => "data:image/jpeg;base64,mockThumbnailData"),
+        getContext: vi.fn(() => mockContext),
+        toDataURL: vi.fn(() => "data:image/jpeg;base64,mockThumbnailData"),
         width: 0,
         height: 0,
       };
@@ -118,7 +119,7 @@ describe("helpers.js", () => {
         videoWidth: 1920,
         videoHeight: 1080,
         src: "",
-        remove: jest.fn(),
+        remove: vi.fn(),
         onloadedmetadata: null,
         onseeked: null,
         onerror: null,
@@ -127,7 +128,7 @@ describe("helpers.js", () => {
       // Mock document.createElement
       originalCreateElement = global.document?.createElement;
       global.document = global.document || {};
-      global.document.createElement = jest.fn((tagName) => {
+      global.document.createElement = vi.fn((tagName) => {
         if (tagName === "canvas") {
           return mockCanvas;
         }
@@ -140,8 +141,8 @@ describe("helpers.js", () => {
       // Mock setTimeout and clearTimeout
       originalSetTimeout = global.setTimeout;
       originalClearTimeout = global.clearTimeout;
-      global.setTimeout = jest.fn(() => 123);
-      global.clearTimeout = jest.fn();
+      global.setTimeout = vi.fn(() => 123);
+      global.clearTimeout = vi.fn();
     });
 
     afterEach(() => {

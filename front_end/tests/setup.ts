@@ -6,6 +6,29 @@ vi.mock('@/assets/img/play-button-icon.png', () => ({
   default: '/mocked-play-button.png'
 }))
 
+vi.mock('@/assets/img/no-image-icon.png', () => ({
+  default: '/mocked-no-image.png'
+}))
+
+// Mock require for assets (since some components use require instead of import)
+const originalRequire = globalThis.require
+globalThis.require = vi.fn((id: string) => {
+  if (id.includes('@/assets/img/play-button-icon.png')) {
+    return '/mocked-play-button.png'
+  }
+  if (id.includes('@/assets/img/no-image-icon.png')) {
+    return '/mocked-no-image.png'
+  }
+  // For any other asset files
+  if (id.includes('@/assets/')) {
+    return '/mocked-asset.png'
+  }
+  if (originalRequire) {
+    return originalRequire(id)
+  }
+  throw new Error(`Cannot find module '${id}'`)
+})
+
 const mockPlayers: Record<string, any> = {}
 
 const createMockPlayer = (element: any, options?: any) => {

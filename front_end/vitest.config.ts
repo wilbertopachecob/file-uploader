@@ -14,5 +14,13 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],
+    // CI-friendly configuration
+    reporter: process.env.CI ? ['default'] : ['verbose'],
+    silent: !!process.env.CI,
+    run: !!process.env.CI,
+    // Mock assets
+    alias: {
+      '\\.(png|jpg|jpeg|gif|svg)$': 'test-file-stub',
+    },
   },
 })

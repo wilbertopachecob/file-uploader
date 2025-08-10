@@ -8,6 +8,7 @@
     "build": "vue-tsc && vite build --outDir ../server/public",
     "watch": "vite build --outDir ../server/public --watch",
     "test:unit": "vitest",
+    "test:ci": "vitest run --reporter default --silent",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"

@@ -237,7 +237,7 @@ export default {
         // Generate thumbnail asynchronously using utility function
         this.generateVideoThumbnailWrapper(file);
         // Return fallback while generating
-        return require("@/assets/img/play-button-icon.png");
+        return this.playButtonIcon;
       }
       return file.src;
     },
