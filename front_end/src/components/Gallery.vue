@@ -176,10 +176,7 @@ export default {
   mounted() {
     const modal = document.querySelector("#galleryModal");
 
-    // Make closeModal available globally for testing
-    window.testCloseModal = () => {
-      this.closeModal();
-    };
+    // For testing, use Vue's test utilities to access component methods instead of exposing them globally.
 
     if (modal) {
       modal.addEventListener("hidden.bs.modal", this.closePlayer);
@@ -303,8 +300,6 @@ export default {
               this.loadPlayer();
             }
           } else if (this.$refs.openModal) {
-            // eslint-disable-next-line no-console
-            console.log("Using fallback button approach");
             // Fallback to trigger button
             this.$refs.openModal.click();
           }
@@ -412,12 +407,10 @@ export default {
           try {
             const modalInstance = Modal.getOrCreateInstance(modalEl);
             modalInstance.hide();
-            // eslint-disable-next-line no-console
-            console.log("Modal closed via Bootstrap API");
+            // Modal closed via Bootstrap API
             return;
           } catch (e) {
-            // eslint-disable-next-line no-console
-            console.warn("Bootstrap close failed, using manual close:", e);
+            // Bootstrap close failed, using manual close
           }
         }
 
@@ -437,8 +430,7 @@ export default {
           backdrop.remove();
         }
 
-        // eslint-disable-next-line no-console
-        console.log("Modal closed manually");
+        // Modal closed manually
         return;
       }
     },

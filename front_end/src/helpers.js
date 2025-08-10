@@ -91,7 +91,7 @@ export function generateVideoThumbnail(videoSrc, options = {}) {
         video.currentTime = seekTime;
       } catch (error) {
         cleanup();
-        reject(new Error(`Failed to seek video: ${error.message}`));
+        safeReject(new Error(`Failed to seek video: ${error.message}`));
       }
     };
 
@@ -102,7 +102,7 @@ export function generateVideoThumbnail(videoSrc, options = {}) {
 
         if (!ctx) {
           cleanup();
-          reject(new Error("Failed to get canvas context"));
+          safeReject(new Error("Failed to get canvas context"));
           return;
         }
 
@@ -118,16 +118,16 @@ export function generateVideoThumbnail(videoSrc, options = {}) {
         const thumbnail = canvas.toDataURL("image/jpeg", jpegQuality);
 
         cleanup();
-        resolve(thumbnail);
+        safeResolve(thumbnail);
       } catch (error) {
         cleanup();
-        reject(new Error(`Failed to generate thumbnail: ${error.message}`));
+        safeReject(new Error(`Failed to generate thumbnail: ${error.message}`));
       }
     };
 
     video.onerror = (event) => {
       cleanup();
-      reject(
+      safeReject(
         new Error(`Failed to load video: ${event.message || "Unknown error"}`)
       );
     };
@@ -135,20 +135,18 @@ export function generateVideoThumbnail(videoSrc, options = {}) {
     // Set timeout to prevent hanging
     const timeout = setTimeout(() => {
       cleanup();
-      reject(new Error("Video thumbnail generation timed out"));
+      safeReject(new Error("Video thumbnail generation timed out"));
     }, 10000); // 10 second timeout
 
     // Clear timeout on success or error
-    const originalResolve = resolve;
-    const originalReject = reject;
-    resolve = (...args) => {
+    function safeResolve(...args) {
       clearTimeout(timeout);
-      originalResolve(...args);
-    };
-    reject = (...args) => {
+      resolve(...args);
+    }
+    function safeReject(...args) {
       clearTimeout(timeout);
-      originalReject(...args);
-    };
+      reject(...args);
+    }
 
     video.src = videoSrc;
   });
