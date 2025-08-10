@@ -118,7 +118,7 @@ app.use((err: Error | ApiError, req: Request, res: Response, next: NextFunction)
   res.status(status).json({
     success: false,
     error: message,
-    ...(isProduction ? {} : { stack: err instanceof Error && typeof err.stack === 'string' && err.stack.length > 0 ? err.stack : undefined }),
+    ...(isProduction ? {} : { stack: err instanceof Error ? err.stack : undefined }),
   });
 });
 

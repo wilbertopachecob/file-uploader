@@ -10,7 +10,7 @@ import {
   sanitizeFilename,
 } from '../fileHelpers';
 import { FileCategory } from '@/constants';
-import type { UploadedFile } from '@/types';
+
 
 describe('fileHelpers', () => {
   describe('bytesToSize', () => {
@@ -29,7 +29,7 @@ describe('fileHelpers', () => {
 
   describe('isImage', () => {
     it('identifies image files correctly', () => {
-      const imageFile: UploadedFile = {
+      const imageFile: Express.Multer.File = {
         fieldname: 'file',
         originalname: 'test.jpg',
         encoding: '7bit',
@@ -46,7 +46,7 @@ describe('fileHelpers', () => {
     });
 
     it('identifies non-image files correctly', () => {
-      const videoFile: UploadedFile = {
+      const videoFile: Express.Multer.File = {
         fieldname: 'file',
         originalname: 'test.mp4',
         encoding: '7bit',
@@ -65,7 +65,7 @@ describe('fileHelpers', () => {
 
   describe('isVideo', () => {
     it('identifies video files correctly', () => {
-      const videoFile: UploadedFile = {
+      const videoFile: Express.Multer.File = {
         fieldname: 'file',
         originalname: 'test.mp4',
         encoding: '7bit',
@@ -84,7 +84,7 @@ describe('fileHelpers', () => {
 
   describe('getFileCategory', () => {
     it('categorizes files correctly', () => {
-      const imageFile: UploadedFile = {
+      const imageFile: Express.Multer.File = {
         fieldname: 'file',
         originalname: 'test.jpg',
         encoding: '7bit',
@@ -103,7 +103,7 @@ describe('fileHelpers', () => {
 
   describe('isValidFileSize', () => {
     it('validates file size correctly', () => {
-      const file: UploadedFile = {
+      const file: Express.Multer.File = {
         fieldname: 'file',
         originalname: 'test.jpg',
         encoding: '7bit',

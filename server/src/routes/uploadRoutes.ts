@@ -7,7 +7,7 @@ import * as mime from 'mime-types';
 
 import { isVideo, isImage, sanitizeFilename } from '@/helpers/fileHelpers';
 import { UPLOAD_CONFIG, HttpStatus, ErrorMessages, SuccessMessages } from '@/constants';
-import type { UploadedFile, ApiResponse, HealthResponse } from '@/types';
+import type { ApiResponse, HealthResponse } from '@/types';
 
 const router = express.Router();
 const appDir = path.dirname(require.main?.filename || '');

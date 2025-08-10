@@ -1,5 +1,5 @@
 import { SUPPORTED_MIME_TYPES, FileCategory } from '@/constants';
-import type { UploadedFile } from '@/types';
+
 
 /**
  * Convert a number of bytes into a human-readable string.
@@ -25,7 +25,7 @@ export function bytesToSize(bytes: number): string {
  * @param file - Multer file object
  * @returns True if the file is an image
  */
-export function isImage(file: UploadedFile): boolean {
+export function isImage(file: Express.Multer.File): boolean {
   if (!file.mimetype) return false;
   return (SUPPORTED_MIME_TYPES.IMAGES as readonly string[]).includes(file.mimetype) || 
          file.mimetype.includes('image');
@@ -37,7 +37,7 @@ export function isImage(file: UploadedFile): boolean {
  * @param file - Multer file object
  * @returns True if the file is a video
  */
-export function isVideo(file: UploadedFile): boolean {
+export function isVideo(file: Express.Multer.File): boolean {
   if (!file.mimetype) return false;
   return (SUPPORTED_MIME_TYPES.VIDEOS as readonly string[]).includes(file.mimetype) || 
          file.mimetype.includes('video');
@@ -49,7 +49,7 @@ export function isVideo(file: UploadedFile): boolean {
  * @param file - Multer file object
  * @returns True if the file is a document
  */
-export function isDocument(file: UploadedFile): boolean {
+export function isDocument(file: Express.Multer.File): boolean {
   if (!file.mimetype) return false;
   return (SUPPORTED_MIME_TYPES.DOCUMENTS as readonly string[]).includes(file.mimetype) || 
          file.mimetype.includes('text') || 
@@ -62,7 +62,7 @@ export function isDocument(file: UploadedFile): boolean {
  * @param file - Multer file object
  * @returns The file category
  */
-export function getFileCategory(file: UploadedFile): FileCategory {
+export function getFileCategory(file: Express.Multer.File): FileCategory {
   if (isImage(file)) return FileCategory.IMAGE;
   if (isVideo(file)) return FileCategory.VIDEO;
   if (isDocument(file)) return FileCategory.DOCUMENT;
@@ -75,7 +75,7 @@ export function getFileCategory(file: UploadedFile): FileCategory {
  * @param file - Multer file object
  * @returns Directory name for the file type
  */
-export function getUploadDirectory(file: UploadedFile): string {
+export function getUploadDirectory(file: Express.Multer.File): string {
   if (isVideo(file)) return 'video';
   if (isImage(file)) return 'img';
   return 'misc';
@@ -88,7 +88,7 @@ export function getUploadDirectory(file: UploadedFile): string {
  * @param maxSize - Maximum allowed size in bytes
  * @returns True if file size is valid
  */
-export function isValidFileSize(file: UploadedFile, maxSize: number): boolean {
+export function isValidFileSize(file: Express.Multer.File, maxSize: number): boolean {
   return file.size <= maxSize;
 }
 
@@ -98,7 +98,7 @@ export function isValidFileSize(file: UploadedFile, maxSize: number): boolean {
  * @param file - Multer file object
  * @returns True if file type is supported
  */
-export function isValidFileType(file: UploadedFile): boolean {
+export function isValidFileType(file: Express.Multer.File): boolean {
   if (!file.mimetype) return false;
   
   const allSupportedTypes: string[] = [
