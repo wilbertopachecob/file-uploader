@@ -136,6 +136,7 @@ import "video.js/dist/video-js.css";
 import videojs from "video.js";
 import { isVideo, isImage, generateVideoThumbnail } from "@/helpers";
 import { Modal } from "bootstrap";
+import playButtonIcon from "@/assets/img/play-button-icon.png";
 export default {
   props: {
     files: {
@@ -150,11 +151,13 @@ export default {
       show: false,
       currentFile: {},
       index: 0,
+      playButtonIcon,
       videos: [],
       player: null,
       videoOptions: {
         autoplay: false,
         controls: true,
+        // Initialized empty; populated dynamically from selected file in loadPlayer
         sources: [],
       },
       videoThumbnails: new Map(), // Cache for video thumbnails
@@ -234,7 +237,7 @@ export default {
         // Generate thumbnail asynchronously using utility function
         this.generateVideoThumbnailWrapper(file);
         // Return fallback while generating
-        return require("@/assets/img/play-button-icon.png");
+        return this.playButtonIcon;
       }
       return file.src;
     },

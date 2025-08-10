@@ -45,17 +45,30 @@
 
 <script>
 import { isImage, isVideo, bytesToSize } from "@/helpers";
+
+/**
+ * @typedef {Object} ClientFile
+ * @property {string=} name
+ * @property {number=} size
+ * @property {string=} src
+ * @property {string=} type
+ */
+
 export default {
+  name: "UploadedFilesList",
   props: {
+    /** @type {{ type: ArrayConstructor, required: true, default: () => ClientFile[] }} */
     files: {
       required: true,
       type: Array,
+      default: () => [],
     },
   },
   methods: {
     isImage,
     isVideo,
     bytesToSize,
+    /** @param {ClientFile} file */
     loadGallery(file) {
       this.$emit("load-gallery", file);
     },

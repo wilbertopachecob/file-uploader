@@ -1,3 +1,4 @@
+// @ts-check
 const express = require("express"),
   app = express(),
   router = require("./routes/routes"),
@@ -42,14 +43,14 @@ app.use(express.json());
 app.use(router);
 
 // Centralized error handler
-// eslint-disable-next-line no-unused-vars
+ 
 app.use((err, req, res, next) => {
   if (!err) return next();
   const status = err.status || 500;
   const message = err.message || "Internal Server Error";
   if (!isProduction) {
     // Log stack in development for easier debugging
-    // eslint-disable-next-line no-console
+     
     console.error(err);
   }
   res.status(status).json({ error: message });
