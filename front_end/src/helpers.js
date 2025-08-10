@@ -128,7 +128,7 @@ export function generateVideoThumbnail(videoSrc, options = {}) {
     video.onerror = (event) => {
       cleanup();
       safeReject(
-        new Error(`Failed to load video: ${event.message || "Unknown error"}`)
+        new Error(`Failed to load video: ${event.message || "Unknown error"}`),
       );
     };
 

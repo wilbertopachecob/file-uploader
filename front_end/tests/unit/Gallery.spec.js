@@ -47,7 +47,7 @@ describe("Gallery.vue", () => {
     const players = videojs.getPlayers();
     // The DOM id created in Gallery: `videoPlayer_${sanitizedName}` where '-' becomes '_'
     expect(Object.keys(players).some((k) => k.startsWith("videoPlayer_"))).toBe(
-      true
+      true,
     );
   });
 

@@ -282,7 +282,7 @@ export default {
     openModal(name = null) {
       this.errors = [];
       const index = this.files.findIndex(
-        (f) => f.name === name || this.getFileName(f) === name
+        (f) => f.name === name || this.getFileName(f) === name,
       );
       this.index = index >= 0 ? index : 0;
       this.currentFile = this.files[this.index];
@@ -330,7 +330,7 @@ export default {
           let idSuffix = this.getPlayerId(this.currentFile);
           if (!derivedName) {
             const vIdx = this.videos.findIndex(
-              (v) => v === this.currentFile || v.src === this.currentFile.src
+              (v) => v === this.currentFile || v.src === this.currentFile.src,
             );
             idSuffix = this.getPlayerId(this.currentFile, vIdx >= 0 ? vIdx : 0);
           }
@@ -361,7 +361,7 @@ export default {
               if (el.id === `videoPlayer_${idSuffix}`) {
                 el.style.display = "block";
               }
-            }
+            },
           );
           const existingPlayers = videojs.getPlayers();
           const playerKey = `videoPlayer_${idSuffix}`;
@@ -443,7 +443,7 @@ export default {
             if (el.classList.contains("video-js")) {
               el.style.display = "none";
             }
-          }
+          },
         );
       }
     },

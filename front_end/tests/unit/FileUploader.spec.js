@@ -60,7 +60,7 @@ describe("FileUploader.vue", () => {
         name: "pic.png",
         type: "image/png",
         src: "data:...",
-      })
+      }),
     ).not.toThrow();
   });
 
@@ -108,7 +108,7 @@ describe("FileUploader.vue", () => {
       wrapper.vm.getSRC(file);
 
       expect(wrapper.vm.generateVideoThumbnailWrapper).toHaveBeenCalledWith(
-        file
+        file,
       );
     });
   });
@@ -138,7 +138,7 @@ describe("FileUploader.vue", () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.videoThumbnails.get(file.src)).toBe(
-        "data:image/jpeg;base64,mockVideoThumbnail"
+        "data:image/jpeg;base64,mockVideoThumbnail",
       );
       // Don't test $forceUpdate directly since it's hard to mock properly
     });
@@ -152,7 +152,7 @@ describe("FileUploader.vue", () => {
 
       // Make the mock reject
       mockGenerateVideoThumbnail.mockRejectedValue(
-        new Error("Generation failed")
+        new Error("Generation failed"),
       );
 
       // Call the method (it doesn't throw, it handles the error internally)
@@ -168,7 +168,7 @@ describe("FileUploader.vue", () => {
 
       expect(consoleSpy).toHaveBeenCalledWith(
         "Failed to generate video thumbnail:",
-        expect.any(Error)
+        expect.any(Error),
       );
 
       // Should not cache failed results

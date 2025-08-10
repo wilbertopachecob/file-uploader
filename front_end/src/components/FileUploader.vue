@@ -223,7 +223,7 @@ export default {
             },
             onUploadProgress: (progressEvent) => {
               this.uploadPercentage = parseInt(
-                Math.round((progressEvent.loaded / progressEvent.total) * 100)
+                Math.round((progressEvent.loaded / progressEvent.total) * 100),
               );
             },
           })
