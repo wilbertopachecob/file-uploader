@@ -40,7 +40,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const path = __importStar(require("path"));
-const rotating_file_stream_1 = __importDefault(require("rotating-file-stream"));
+const rfs = __importStar(require("rotating-file-stream"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const uploadRoutes_1 = __importDefault(require("./routes/uploadRoutes"));
 const constants_1 = require("./constants");
@@ -61,7 +61,7 @@ const corsOptions = {
  */
 const isProduction = process.env.NODE_ENV === 'production';
 // Create a rotating write stream for production logs
-const accessLogStream = rotating_file_stream_1.default.createStream('access.log', {
+const accessLogStream = rfs.createStream('access.log', {
     interval: constants_1.ENV_CONFIG.LOG_INTERVAL,
     path: path.join(__dirname, '..', 'logs'),
 });
@@ -104,7 +104,7 @@ app.get('/', (req, res) => {
 /**
  * 404 handler
  */
-app.use('*', (req, res) => {
+app.use((req, res) => {
     res.status(constants_1.HttpStatus.NOT_FOUND).json({
         success: false,
         error: 'Endpoint not found',

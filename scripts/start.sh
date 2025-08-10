@@ -16,7 +16,8 @@ npm run build
 echo "[start.sh] Starting server..."
 cd "$SERVER_DIR"
 npm install --no-audit --no-fund
-node index.js
+npm run build
+npm start
 
 
 
