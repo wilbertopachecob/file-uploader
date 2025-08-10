@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Uploaded Files</h3>
+    <h3 class="mb-3">Uploaded Files</h3>
     <table class="table">
       <thead class="table-dark">
         <tr>

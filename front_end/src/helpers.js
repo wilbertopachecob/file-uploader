@@ -32,7 +32,11 @@ export function bytesToSize(bytes) {
  * @returns {boolean}
  */
 export function isImage(f) {
-  return f.type && (imageTypes.includes(f.type) || f.type.includes("image"));
+  return !!(
+    f &&
+    f.type &&
+    (imageTypes.includes(f.type) || f.type.includes("image"))
+  );
 }
 
 /**
@@ -42,5 +46,108 @@ export function isImage(f) {
  * @returns {boolean}
  */
 export function isVideo(f) {
-  return f.type && (videoTypes.includes(f.type) || f.type.includes("video"));
+  return !!(
+    f &&
+    f.type &&
+    (videoTypes.includes(f.type) || f.type.includes("video"))
+  );
+}
+
+/**
+ * Generate a thumbnail image from a video file.
+ * Captures a frame at 10% of video duration or 2 seconds, whichever is smaller.
+ *
+ * @param {string} videoSrc - The source URL of the video
+ * @param {Object} options - Configuration options
+ * @param {number} [options.seekPercentage=0.1] - Percentage of video duration to seek to (0.0-1.0)
+ * @param {number} [options.maxSeekTime=2] - Maximum seek time in seconds
+ * @param {number} [options.thumbnailWidth=300] - Width of the generated thumbnail
+ * @param {number} [options.jpegQuality=0.8] - JPEG quality (0.0-1.0)
+ * @returns {Promise<string>} Promise that resolves to a data URL of the thumbnail image
+ */
+export function generateVideoThumbnail(videoSrc, options = {}) {
+  const {
+    seekPercentage = 0.1,
+    maxSeekTime = 2,
+    thumbnailWidth = 300,
+    jpegQuality = 0.8,
+  } = options;
+
+  return new Promise((resolve, reject) => {
+    const video = document.createElement("video");
+    video.crossOrigin = "anonymous";
+    video.muted = true;
+    video.preload = "metadata";
+
+    // Cleanup function
+    const cleanup = () => {
+      video.remove();
+    };
+
+    video.onloadedmetadata = () => {
+      try {
+        // Seek to specified percentage of video duration or maxSeekTime, whichever is smaller
+        const seekTime = Math.min(video.duration * seekPercentage, maxSeekTime);
+        video.currentTime = seekTime;
+      } catch (error) {
+        cleanup();
+        safeReject(new Error(`Failed to seek video: ${error.message}`));
+      }
+    };
+
+    video.onseeked = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) {
+          cleanup();
+          safeReject(new Error("Failed to get canvas context"));
+          return;
+        }
+
+        // Set canvas size to maintain aspect ratio
+        const aspectRatio = video.videoWidth / video.videoHeight;
+        canvas.width = thumbnailWidth;
+        canvas.height = thumbnailWidth / aspectRatio;
+
+        // Draw video frame to canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert to data URL
+        const thumbnail = canvas.toDataURL("image/jpeg", jpegQuality);
+
+        cleanup();
+        safeResolve(thumbnail);
+      } catch (error) {
+        cleanup();
+        safeReject(new Error(`Failed to generate thumbnail: ${error.message}`));
+      }
+    };
+
+    video.onerror = (event) => {
+      cleanup();
+      safeReject(
+        new Error(`Failed to load video: ${event.message || "Unknown error"}`),
+      );
+    };
+
+    // Set timeout to prevent hanging
+    const timeout = setTimeout(() => {
+      cleanup();
+      safeReject(new Error("Video thumbnail generation timed out"));
+    }, 10000); // 10 second timeout
+
+    // Clear timeout on success or error
+    function safeResolve(...args) {
+      clearTimeout(timeout);
+      resolve(...args);
+    }
+    function safeReject(...args) {
+      clearTimeout(timeout);
+      reject(...args);
+    }
+
+    video.src = videoSrc;
+  });
 }
