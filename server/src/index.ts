@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import * as path from 'path';
-import rfs from 'rotating-file-stream';
+import * as rfs from 'rotating-file-stream';
 import dotenv from 'dotenv';
 
 import uploadRoutes from '@/routes/uploadRoutes';
@@ -83,7 +83,7 @@ app.get('/', (req: Request, res: Response) => {
 /**
  * 404 handler
  */
-app.use('*', (req: Request, res: Response) => {
+app.use((req: Request, res: Response) => {
   res.status(HttpStatus.NOT_FOUND).json({
     success: false,
     error: 'Endpoint not found',
