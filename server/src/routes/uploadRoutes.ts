@@ -19,10 +19,9 @@ const storage = multer.diskStorage({
   destination: function (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) {
     let dest = path.join(appDir, 'uploads');
     
-    const uploadedFile = file as UploadedFile;
-    if (isVideo(uploadedFile)) {
+    if (isVideo(file)) {
       dest = path.join(dest, UPLOAD_CONFIG.UPLOAD_PATHS.VIDEO);
-    } else if (isImage(uploadedFile)) {
+    } else if (isImage(file)) {
       dest = path.join(dest, UPLOAD_CONFIG.UPLOAD_PATHS.IMAGE);
     } else {
       dest = path.join(dest, UPLOAD_CONFIG.UPLOAD_PATHS.MISC);
@@ -77,13 +76,22 @@ router.post('/upload-files', upload.array('files'), (req: Request, res: Response
       } as ApiResponse);
     }
 
+    // Runtime validation to ensure req.files is an array before type assertion
+    if (!Array.isArray(req.files)) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        success: false,
+        error: ErrorMessages.INVALID_REQUEST,
+        message: 'Invalid file upload format',
+      } as ApiResponse);
+    }
+
     const uploadedFiles = req.files as Express.Multer.File[];
     
     res.status(HttpStatus.OK).json({
       success: true,
-      data: uploadedFiles as UploadedFile[],
+      data: uploadedFiles,
       message: SuccessMessages.UPLOAD_COMPLETE,
-    } as ApiResponse<UploadedFile[]>);
+    } as ApiResponse<Express.Multer.File[]>);
     
   } catch (error) {
     next(error);
