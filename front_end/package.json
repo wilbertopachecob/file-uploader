@@ -8,7 +8,7 @@
     "build": "vue-tsc && vite build --outDir ../server/public",
     "watch": "vite build --outDir ../server/public --watch",
     "test:unit": "vitest run",
-    "test:ci": "vitest run --reporter default --silent",
+    "test:ci": "vitest run --reporter=default --silent",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^7.0.0",
+    "@types/node": "^24.2.1",
     "@types/video.js": "^7.3.58",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
