@@ -42,11 +42,11 @@
 
     <div v-show="!files.length">
       <i class="fas fa-file-upload"></i>
-      <p class="mt-2">Drag and Drop</p>
-      <p>OR</p>
+      <p class="mt-2 mb-1">Drag and Drop</p>
+      <p class="text-muted small">or select files below</p>
       <div class="file-input">
         <label for="file"
-          ><i class="fas fa-hand-pointer"></i> Select a file</label
+          ><i class="fas fa-hand-pointer"></i> Select files</label
         >
         <input
           type="file"
@@ -65,6 +65,7 @@
     >
       <div
         class="thumbnail-container mx-2 mt-3"
+        :class="{ 'is-video': isVideo(file) }"
         v-for="(file, idk) of files"
         :key="idk"
         @click="openGallery(file)"
@@ -95,7 +96,12 @@
 <script>
 // Maximum allowed upload size: 100MB
 const MAXSIZE = 100 * 1024 * 1024;
-import { bytesToSize, isVideo, isImage } from "@/helpers";
+import {
+  bytesToSize,
+  isVideo,
+  isImage,
+  generateVideoThumbnail,
+} from "@/helpers";
 import axios from "axios";
 import UploadedFilesList from "@/components/UploadedFilesList";
 import Gallery from "@/components/Gallery";
@@ -120,6 +126,7 @@ export default {
     isLoading: false,
     uploadedFiles: [],
     loadLocal: 1,
+    videoThumbnails: new Map(), // Cache for video thumbnails
   }),
   computed: {
     getFilesInstance() {
@@ -159,8 +166,38 @@ export default {
     isImage,
     getSRC(file) {
       if (isImage(file)) return file.src;
-      if (isVideo(file)) return playButtonIcon;
+      if (isVideo(file)) {
+        const cached = this.videoThumbnails.get(file.src);
+        if (cached) {
+          return cached;
+        }
+        // Generate thumbnail asynchronously
+        this.generateVideoThumbnailWrapper(file);
+        // Return fallback while generating
+        return playButtonIcon;
+      }
       return noImageIcon;
+    },
+    generateVideoThumbnailWrapper(file) {
+      // Prevent duplicate generation for the same video
+      if (this.videoThumbnails.has(file.src)) {
+        return;
+      }
+
+      // Use the utility function
+      generateVideoThumbnail(file.src)
+        .then((thumbnail) => {
+          // Cache the thumbnail
+          this.videoThumbnails.set(file.src, thumbnail);
+
+          // Force reactivity update
+          this.$forceUpdate();
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.warn("Failed to generate video thumbnail:", error);
+          // Keep the fallback icon - no need to cache failure
+        });
     },
     openGallery(file, loadValue = 1) {
       this.loadLocal = loadValue;
@@ -186,7 +223,7 @@ export default {
             },
             onUploadProgress: (progressEvent) => {
               this.uploadPercentage = parseInt(
-                Math.round((progressEvent.loaded / progressEvent.total) * 100)
+                Math.round((progressEvent.loaded / progressEvent.total) * 100),
               );
             },
           })
