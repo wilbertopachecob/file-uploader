@@ -27,7 +27,7 @@
     "@types/video.js": "^7.3.58",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
-    "@vitejs/plugin-vue": "^4.6.2",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
     "@vue/test-utils": "^2.4.0",
