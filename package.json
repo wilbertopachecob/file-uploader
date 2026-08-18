@@ -4,6 +4,9 @@
   "private": true,
   "version": "1.0.0",
   "description": "Root scripts to run server and frontend",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "setup": "npm --prefix server install && npm --prefix front_end install",
     "start": "npm --prefix server run start",
