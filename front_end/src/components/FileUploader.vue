@@ -108,6 +108,7 @@ import Gallery from "@/components/Gallery.vue";
 // Cache asset paths to avoid repeated require() calls at runtime
 import playButtonIcon from "@/assets/img/play-button-icon.png";
 import noImageIcon from "@/assets/img/no-image-icon.png";
+import { logger } from "@/utils/logger";
 export default {
   name: "FileUploader",
   components: {
@@ -194,7 +195,7 @@ export default {
           this.$forceUpdate();
         })
         .catch((error) => {
-          console.warn("Failed to generate video thumbnail:", error);
+          logger.warn("Failed to generate video thumbnail:", error);
           // Keep the fallback icon - no need to cache failure
         });
     },

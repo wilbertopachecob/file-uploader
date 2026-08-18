@@ -2,6 +2,16 @@ import { mount, shallowMount } from "@vue/test-utils";
 import { vi } from "vitest";
 import FileUploader from "@/components/FileUploader.vue";
 import * as helpers from "@/helpers";
+import { logger } from "@/utils/logger";
+
+vi.mock("@/utils/logger", () => ({
+  logger: {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  },
+}));
 
 const imageFile = new File(["img"], "pic.png", { type: "image/png" });
 const videoFile = new File(["vid"], "clip.mp4", { type: "video/mp4" });
@@ -175,8 +185,8 @@ describe("FileUploader.vue", () => {
       wrapper.vm.$refs.gallery = { openModal: vi.fn() };
       const file = { type: "video/mp4", src: "data:video/mp4;base64,test" };
 
-      // Mock console.warn to avoid test output noise
-      const consoleSpy = vi.spyOn(console, "warn").mockImplementation();
+      // Mock logger to avoid test output noise
+      vi.mocked(logger.warn).mockClear();
 
       // Make the mock reject
       mockGenerateVideoThumbnail.mockRejectedValue(
@@ -194,15 +204,13 @@ describe("FileUploader.vue", () => {
       // Wait a bit more for the error handler to execute
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(logger.warn).toHaveBeenCalledWith(
         "Failed to generate video thumbnail:",
         expect.any(Error),
       );
 
       // Should not cache failed results
       expect(wrapper.vm.videoThumbnails.has(file.src)).toBe(false);
-
-      consoleSpy.mockRestore();
     });
   });
 
