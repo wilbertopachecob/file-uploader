@@ -12,13 +12,12 @@
     "types": ["node"],
     "checkJs": false,
     "allowJs": false,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/types": ["src/types"],
-      "@/constants": ["src/constants"],
-      "@/helpers/*": ["src/helpers/*"],
-      "@/routes/*": ["src/routes/*"]
+      "@/*": ["./src/*"],
+      "@/types": ["./src/types"],
+      "@/constants": ["./src/constants"],
+      "@/helpers/*": ["./src/helpers/*"],
+      "@/routes/*": ["./src/routes/*"]
     }
   },
   "include": [

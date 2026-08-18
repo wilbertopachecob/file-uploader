@@ -80,7 +80,7 @@ app.use('/uploads/misc', express_1.default.static(path.join(__dirname, '..', 'up
 app.use('/uploads/video', express_1.default.static(path.join(__dirname, '..', 'uploads', 'video')));
 // CORS
 app.use((0, cors_1.default)(corsOptions));
-app.options('*', (0, cors_1.default)(corsOptions));
+app.options('/{*splat}', (0, cors_1.default)(corsOptions));
 // Body parsing
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));

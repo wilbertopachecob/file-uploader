@@ -257,7 +257,6 @@ export default {
           this.$forceUpdate();
         })
         .catch((error) => {
-          // eslint-disable-next-line no-console
           console.warn("Failed to generate video thumbnail:", error);
           // Keep the fallback icon - no need to cache failure
         });
@@ -307,7 +306,6 @@ export default {
             this.$refs.openModal.click();
           }
         } catch (e) {
-          // eslint-disable-next-line no-console
           console.error("Modal open error:", e);
           // Final fallback
           if (this.$refs.openModal) {
@@ -349,7 +347,6 @@ export default {
             playerEl.tagName.toUpperCase() !== "VIDEO"
           ) {
             // Element not yet in DOM or not a video element; bail out silently to avoid video.js error
-            // eslint-disable-next-line no-console
             console.warn("[Gallery.loadPlayer] player element not ready", {
               playerRefKey,
               playerElExists: Boolean(playerEl),
@@ -373,7 +370,6 @@ export default {
               ? existingPlayers[playerKey]
               : videojs(playerEl, this.videoOptions);
         } catch (error) {
-          // eslint-disable-next-line no-console
           console.error({ error });
           this.errors.push(error);
         }
