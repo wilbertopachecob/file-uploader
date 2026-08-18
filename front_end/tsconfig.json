@@ -10,12 +10,11 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
