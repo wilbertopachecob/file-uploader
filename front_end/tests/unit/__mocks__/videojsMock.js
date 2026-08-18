@@ -11,4 +11,4 @@ function videojs(el) {
 
 videojs.getPlayers = () => players;
 
-module.exports = videojs;
+export default videojs;

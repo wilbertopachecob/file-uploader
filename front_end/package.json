@@ -2,6 +2,7 @@
   "name": "upload-file",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "serve": "vite",
     "prebuild": "npm run lint:fix",
