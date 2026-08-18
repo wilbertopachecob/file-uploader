@@ -54,7 +54,14 @@ There is also a convenience script that builds the frontend and starts the serve
 
 ### Environment variables
 
-Create a `.env` file in `server/`:
+Copy the example files and edit as needed:
+
+```
+cp server/.env.example server/.env
+cp front_end/.env.example front_end/.env
+```
+
+**`server/.env`**
 
 ```
 # Port for the API / production app server
@@ -64,7 +71,7 @@ PORT=3000
 DEV_HOST=http://localhost:8080
 ```
 
-Create a `.env` file in `front_end/`:
+**`front_end/.env`**
 
 ```
 # Base URL of the API server
@@ -210,7 +217,7 @@ Frontend (`front_end/package.json`):
 Server: start with `node index.js` from the `server` folder.
 
 ### Notes
-- Ensure your `.env` files are created as shown above before running.
+- Copy `server/.env.example` and `front_end/.env.example` to `.env` in each folder before running (see Env vars above).
 - When developing locally, keep both the API and the Vue dev server running.
 
 ### License
