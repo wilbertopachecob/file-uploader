@@ -194,7 +194,6 @@ export default {
           this.$forceUpdate();
         })
         .catch((error) => {
-          // eslint-disable-next-line no-console
           console.warn("Failed to generate video thumbnail:", error);
           // Keep the fallback icon - no need to cache failure
         });

@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import { describe, it, expect } from '@jest/globals';
 import {
   bytesToSize,
@@ -11,6 +12,21 @@ import {
 } from '../fileHelpers';
 import { FileCategory } from '@/constants';
 
+function mockFile(overrides: Partial<Express.Multer.File> = {}): Express.Multer.File {
+  return {
+    fieldname: 'file',
+    originalname: 'test.jpg',
+    encoding: '7bit',
+    mimetype: 'image/jpeg',
+    destination: '',
+    filename: '',
+    path: '',
+    size: 1024,
+    stream: Readable.from([]),
+    buffer: Buffer.from(''),
+    ...overrides,
+  };
+}
 
 describe('fileHelpers', () => {
   describe('bytesToSize', () => {
@@ -29,95 +45,52 @@ describe('fileHelpers', () => {
 
   describe('isImage', () => {
     it('identifies image files correctly', () => {
-      const imageFile: Express.Multer.File = {
-        fieldname: 'file',
-        originalname: 'test.jpg',
-        encoding: '7bit',
-        mimetype: 'image/jpeg',
-        destination: '',
-        filename: '',
-        path: '',
-        size: 1024,
-        stream: {} as any,
-        buffer: Buffer.from(''),
-      };
-
-      expect(isImage(imageFile)).toBe(true);
+      expect(isImage(mockFile({ originalname: 'test.jpg', mimetype: 'image/jpeg' }))).toBe(true);
     });
 
     it('identifies non-image files correctly', () => {
-      const videoFile: Express.Multer.File = {
-        fieldname: 'file',
-        originalname: 'test.mp4',
-        encoding: '7bit',
-        mimetype: 'video/mp4',
-        destination: '',
-        filename: '',
-        path: '',
-        size: 1024,
-        stream: {} as any,
-        buffer: Buffer.from(''),
-      };
-
-      expect(isImage(videoFile)).toBe(false);
+      expect(isImage(mockFile({ originalname: 'test.mp4', mimetype: 'video/mp4' }))).toBe(false);
     });
   });
 
   describe('isVideo', () => {
     it('identifies video files correctly', () => {
-      const videoFile: Express.Multer.File = {
-        fieldname: 'file',
-        originalname: 'test.mp4',
-        encoding: '7bit',
-        mimetype: 'video/mp4',
-        destination: '',
-        filename: '',
-        path: '',
-        size: 1024,
-        stream: {} as any,
-        buffer: Buffer.from(''),
-      };
+      expect(isVideo(mockFile({ originalname: 'test.mp4', mimetype: 'video/mp4' }))).toBe(true);
+    });
+  });
 
-      expect(isVideo(videoFile)).toBe(true);
+  describe('isDocument', () => {
+    it('identifies document files correctly', () => {
+      expect(isDocument(mockFile({ originalname: 'test.pdf', mimetype: 'application/pdf' }))).toBe(
+        true
+      );
     });
   });
 
   describe('getFileCategory', () => {
     it('categorizes files correctly', () => {
-      const imageFile: Express.Multer.File = {
-        fieldname: 'file',
-        originalname: 'test.jpg',
-        encoding: '7bit',
-        mimetype: 'image/jpeg',
-        destination: '',
-        filename: '',
-        path: '',
-        size: 1024,
-        stream: {} as any,
-        buffer: Buffer.from(''),
-      };
-
-      expect(getFileCategory(imageFile)).toBe(FileCategory.IMAGE);
+      expect(
+        getFileCategory(mockFile({ originalname: 'test.jpg', mimetype: 'image/jpeg' }))
+      ).toBe(FileCategory.IMAGE);
     });
   });
 
   describe('isValidFileSize', () => {
     it('validates file size correctly', () => {
-      const file: Express.Multer.File = {
-        fieldname: 'file',
-        originalname: 'test.jpg',
-        encoding: '7bit',
-        mimetype: 'image/jpeg',
-        destination: '',
-        filename: '',
-        path: '',
-        size: 1024,
-        stream: {} as any,
-        buffer: Buffer.from(''),
-      };
+      const file = mockFile({ size: 1024 });
 
       expect(isValidFileSize(file, 2048)).toBe(true);
       expect(isValidFileSize(file, 512)).toBe(false);
+    });
+  });
+
+  describe('isValidFileType', () => {
+    it('accepts supported MIME types', () => {
+      expect(isValidFileType(mockFile({ mimetype: 'image/jpeg' }))).toBe(true);
+    });
+
+    it('rejects unsupported MIME types', () => {
+      expect(isValidFileType(mockFile({ mimetype: 'application/x-msdownload' }))).toBe(false);
     });
   });
 

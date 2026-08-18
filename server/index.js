@@ -36,7 +36,7 @@ app.use("/uploads/img", express.static(path.join(__dirname, "uploads", "img")));
 app.use("/uploads/misc", express.static(path.join(__dirname, "uploads", "misc")));
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.options("/{*splat}", cors(corsOptions));
 
 app.use(express.json());
 

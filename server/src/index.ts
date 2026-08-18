@@ -55,7 +55,7 @@ app.use('/uploads/video', express.static(path.join(__dirname, '..', 'uploads', '
 
 // CORS
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('/{*splat}', cors(corsOptions));
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
