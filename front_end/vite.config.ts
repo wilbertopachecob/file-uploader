@@ -7,6 +7,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig({
   plugins: [vue()],
+  envPrefix: ['VITE_', 'VUE_APP_'],
   root: '.',
   publicDir: 'public',
   resolve: {

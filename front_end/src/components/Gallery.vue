@@ -137,6 +137,7 @@ import videojs from "video.js";
 import { isVideo, isImage, generateVideoThumbnail } from "@/helpers";
 import { Modal } from "bootstrap";
 import playButtonIcon from "@/assets/img/play-button-icon.png";
+import { logger } from "@/utils/logger";
 export default {
   props: {
     files: {
@@ -257,7 +258,7 @@ export default {
           this.$forceUpdate();
         })
         .catch((error) => {
-          console.warn("Failed to generate video thumbnail:", error);
+          logger.warn("Failed to generate video thumbnail:", error);
           // Keep the fallback icon - no need to cache failure
         });
     },
@@ -306,7 +307,7 @@ export default {
             this.$refs.openModal.click();
           }
         } catch (e) {
-          console.error("Modal open error:", e);
+          logger.error("Modal open error:", e);
           // Final fallback
           if (this.$refs.openModal) {
             this.$refs.openModal.click();
@@ -347,7 +348,7 @@ export default {
             playerEl.tagName.toUpperCase() !== "VIDEO"
           ) {
             // Element not yet in DOM or not a video element; bail out silently to avoid video.js error
-            console.warn("[Gallery.loadPlayer] player element not ready", {
+            logger.warn("[Gallery.loadPlayer] player element not ready", {
               playerRefKey,
               playerElExists: Boolean(playerEl),
               tagName: playerEl && playerEl.tagName,
@@ -370,7 +371,7 @@ export default {
               ? existingPlayers[playerKey]
               : videojs(playerEl, this.videoOptions);
         } catch (error) {
-          console.error({ error });
+          logger.error("Failed to load video player", error);
           this.errors.push(error);
         }
       });

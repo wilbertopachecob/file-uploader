@@ -69,6 +69,9 @@ Create a `.env` file in `front_end/`:
 ```
 # Base URL of the API server
 VUE_APP_API_URL=http://localhost:3000
+
+# Client log backend: console (default), sentry, or rollbar
+VUE_APP_LOG_SERVICE=console
 ```
 
 ### Run in development
@@ -142,7 +145,59 @@ Open `http://localhost:3000` to use the app.
 - Images and videos are detected by MIME type and routed to `uploads/img` or `uploads/video`. Other files go to `uploads/misc`.
 
 ### Logging
-Access logs are written daily-rotated to `server/logs/access.log`.
+
+**Server:** Access logs are written daily-rotated to `server/logs/access.log`.
+
+**Frontend:** Vue components use a shared logger at `front_end/src/utils/logger.ts` instead of calling `console.*` directly. Import it as:
+
+```js
+import { logger } from "@/utils/logger";
+
+logger.warn("Something went wrong", error);
+```
+
+#### Current behavior
+
+- **Default:** `console` — logs go to the browser devtools console (`console.debug`, `console.info`, `console.warn`, `console.error`).
+- **Configuration:** Set `VUE_APP_LOG_SERVICE` (or `VITE_LOG_SERVICE`) in `front_end/.env` to one of:
+  - `console` — default; no extra setup
+  - `sentry` — route logs to Sentry when the SDK is initialized
+  - `rollbar` — route logs to Rollbar when the SDK is initialized
+- **Safe fallback:** If `sentry` or `rollbar` is selected but the SDK is not initialized on `window`, the logger falls back to `console` so local dev never breaks.
+- **No SDK bundled today:** Sentry and Rollbar are not npm dependencies yet. The logger only calls them when you install and wire up an SDK yourself.
+
+#### Adding Sentry later
+
+1. Install the SDK, e.g. `@sentry/vue` (or `@sentry/browser`).
+2. Initialize it early in `front_end/src/main.ts` before mounting the app.
+3. Expose the client on `window` so the logger can find it:
+
+   ```ts
+   import * as Sentry from "@sentry/vue";
+
+   Sentry.init({ dsn: "YOUR_DSN", /* ... */ });
+   window.Sentry = Sentry;
+   ```
+
+4. Set `VUE_APP_LOG_SERVICE=sentry` in `front_end/.env` and rebuild.
+
+Errors passed as `Error` objects are sent with `captureException`; other messages use `captureMessage`.
+
+#### Adding Rollbar later
+
+1. Install the SDK, e.g. `rollbar`.
+2. Initialize it in `front_end/src/main.ts`:
+
+   ```ts
+   import Rollbar from "rollbar";
+
+   const rollbar = new Rollbar({ accessToken: "YOUR_TOKEN", /* ... */ });
+   window.Rollbar = rollbar;
+   ```
+
+3. Set `VUE_APP_LOG_SERVICE=rollbar` in `front_end/.env` and rebuild.
+
+Log levels map to Rollbar's `debug`, `info`, `warning`, and `error` methods.
 
 ### Useful scripts
 Frontend (`front_end/package.json`):
