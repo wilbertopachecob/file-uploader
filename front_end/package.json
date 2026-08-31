@@ -20,7 +20,7 @@
     "bootstrap": "^5.3.8",
     "core-js": "^3.50.0",
     "video.js": "^8.24.0",
-    "vue": "^3.5.41"
+    "vue": "^3.5.42"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^7.3.1",
