@@ -88,20 +88,14 @@ describe("helpers.js", () => {
     let mockVideo;
     let mockCanvas;
     let mockContext;
-    let originalCreateElement;
-    let originalSetTimeout;
-    let originalClearTimeout;
 
     beforeEach(() => {
-      // Reset all mocks
       vi.clearAllMocks();
 
-      // Mock canvas context
       mockContext = {
         drawImage: vi.fn(),
       };
 
-      // Mock canvas
       mockCanvas = {
         getContext: vi.fn(() => mockContext),
         toDataURL: vi.fn(() => "data:image/jpeg;base64,mockThumbnailData"),
@@ -109,7 +103,6 @@ describe("helpers.js", () => {
         height: 0,
       };
 
-      // Mock video element
       mockVideo = {
         crossOrigin: "",
         muted: false,
@@ -125,10 +118,8 @@ describe("helpers.js", () => {
         onerror: null,
       };
 
-      // Mock document.createElement
-      originalCreateElement = global.document?.createElement;
-      global.document = global.document || {};
-      global.document.createElement = vi.fn((tagName) => {
+      // Vitest 5 / jsdom expose document as a getter-only Window property.
+      vi.spyOn(document, "createElement").mockImplementation((tagName) => {
         if (tagName === "canvas") {
           return mockCanvas;
         }
@@ -138,20 +129,12 @@ describe("helpers.js", () => {
         return {};
       });
 
-      // Mock setTimeout and clearTimeout
-      originalSetTimeout = global.setTimeout;
-      originalClearTimeout = global.clearTimeout;
-      global.setTimeout = vi.fn(() => 123);
-      global.clearTimeout = vi.fn();
+      vi.spyOn(global, "setTimeout").mockImplementation(() => 123);
+      vi.spyOn(global, "clearTimeout").mockImplementation(() => {});
     });
 
     afterEach(() => {
-      // Restore original functions
-      if (originalCreateElement) {
-        global.document.createElement = originalCreateElement;
-      }
-      global.setTimeout = originalSetTimeout;
-      global.clearTimeout = originalClearTimeout;
+      vi.restoreAllMocks();
     });
 
     it("should generate thumbnail successfully", async () => {
