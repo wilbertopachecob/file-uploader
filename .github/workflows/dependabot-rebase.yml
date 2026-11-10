@@ -1,0 +1,89 @@
+name: Dependabot rebase
+
+# Dependabot's default rebase-strategy is "auto", but that mainly runs on
+# merge conflicts or the weekly update job. PRs that are only behind main
+# often sit stale until someone comments "@dependabot rebase".
+# This workflow posts that comment when a Dependabot PR is behind.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: dependabot-rebase
+  cancel-in-progress: false
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rebase Dependabot PRs that are behind main
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pulls = await github.paginate(github.rest.pulls.list, {
+              owner,
+              repo,
+              state: "open",
+              per_page: 100,
+            });
+
+            const dependabotPulls = pulls.filter(
+              (pr) => pr.user && pr.user.login === "dependabot[bot]",
+            );
+
+            for (const pr of dependabotPulls) {
+              const comparison = await github.rest.repos.compareCommitsWithBasehead({
+                owner,
+                repo,
+                basehead: `${pr.base.ref}...${pr.head.ref}`,
+              });
+
+              if (comparison.data.behind_by === 0) {
+                core.info(`#${pr.number} is up to date`);
+                continue;
+              }
+
+              const comments = await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner,
+                  repo,
+                  issue_number: pr.number,
+                  per_page: 100,
+                },
+              );
+              const lastRebase = [...comments]
+                .reverse()
+                .find((comment) =>
+                  /@dependabot\s+rebase/i.test(comment.body || ""),
+                );
+              const oneHourMs = 60 * 60 * 1000;
+              if (
+                lastRebase &&
+                Date.now() - Date.parse(lastRebase.created_at) < oneHourMs
+              ) {
+                core.info(`#${pr.number} already asked to rebase recently`);
+                continue;
+              }
+
+              core.info(
+                `#${pr.number} is behind by ${comparison.data.behind_by}; requesting rebase`,
+              );
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: pr.number,
+                body: "@dependabot rebase",
+              });
+            }
