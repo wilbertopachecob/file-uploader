@@ -24,7 +24,7 @@
     "mime-types": "^3.0.2",
     "morgan": "^1.12.1",
     "multer": "^2.5.0",
-    "rotating-file-stream": "^3.2.10",
+    "rotating-file-stream": "^4.0.0",
     "uuid": "^14.0.3"
   },
   "devDependencies": {
